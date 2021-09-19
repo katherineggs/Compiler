@@ -1,6 +1,6 @@
 import abstracts.Symbols as simb
 import abstracts.Tokens as tk
-import Accepting
+import scanner.Accepting as Accepting
 class Scanner:
 
     # Los simbolos los vamos a declarar
