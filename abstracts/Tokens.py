@@ -1,12 +1,16 @@
+import abstracts.Symbols as Symbols
+
 class Tokens:
-    def __init__(self, tipoSimbolo, value=""):
+    def __init__(self, tipoSimbolo, id, value=""):
         self.tipoSimbolo = tipoSimbolo
         self.value = value
+        self.id = id #linea de codigo
 
     def prettyPrint(self):
-        prettyPrint = "- Type: " + self.tipoSimbolo.name 
+        # simb = Symbols.Symbol()
+        prettyPrint = "• Tipo Símbolo: " + str(self.tipoSimbolo) + ", línea: " + str(self.id) 
         if(self.value != ""):
-            prettyPrint += ", Value: " + self.value+" -"
+            prettyPrint += ", Atributo: " + self.value + " "
         else:
             prettyPrint += " -"
         return prettyPrint

@@ -1,6 +1,7 @@
 # CLI
 import scanner.Scanner as scanner
 import files.inputFile as inputFile
+import files.outputFile as outputFile
 
 import sys
 
@@ -20,35 +21,36 @@ def ayuda():
      print("• Imprime información de debugging\n\n")
      
 
-def execute(inputCodigo, nombreArchivo, stage, optStage, debugStage):
+def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
     #opciones
     if(stage == "scanner"):
-        print("prueba ss")
         debug = False
         #debug
         if(("scannner" in debugStage)):
             debug = True
-
+        inp = inputFile.inputFile()
         #scanner y leer tokens inputFile
-        leerArchivo = inputFile.inputFile.convertirArchivo(inputCodigo)
-        print("\n\n ------------------------")
-        print(leerArchivo)
+        leerArchivo = inp.convertirArchivo(inputCodigo)
+        print("\n\n ----------------------------")
 
-        listaTokens, ListaErrores = scanner.Scanner.scanner(leerArchivo, debug)
+        scan = scanner.Scanner()
+        listaTokens, listaErrores = scan.scanner(leerArchivo, debug)
         printTokens = []
 
         for token in listaTokens:
             printTokens.append(token.prettyPrint())
-    
-    print(inputCodigo, nombreArchivo, stage, optStage, debugStage)
+        
+        # Generar output
+        out = outputFile.OutputFile()
+        out.outputFile(printTokens, nombreArchivoOut)
+        
+        for error in listaErrores:
+            print(error)
 
-        #Generar output
-        # --------------------------- Falta, ESCRIBIR ARCHIVO ---------------------------------------------
+        print("\n ----------------------------")
 
-
-    
 if __name__ == "__main__":
-    inputCodigo = "/Users/andreareyes/Desktop/compiladores/Compiler/codigo.decaf"
+    inputCodigo = ""
     nombreArchivo = "out"
     stage = "scanner"
     optStage = ""
@@ -56,8 +58,6 @@ if __name__ == "__main__":
     
     if (len(sys.argv) >= 4 and len(sys.argv) % 2 == 0):
         valido = True
-        print("file: " + sys.argv[0])
-        print("<filename>: " + sys.argv[1])
         inputCodigo = sys.argv[1]
         for i in range(2, len(sys.argv)):
             if(i % 2 == 0):
@@ -74,7 +74,6 @@ if __name__ == "__main__":
                     valido = False
                     print('invalid param')
                     ayuda()
-        print(stage)
         if(valido):
             execute(inputCodigo, nombreArchivo, stage, optStage, debugStage)
 
@@ -84,6 +83,5 @@ if __name__ == "__main__":
     else:
         ayuda()
 
-execute("\n\n/Users/andreareyes/Desktop/compiladores/Compiler/codigo.decaf", "out", "parse", "", [])
 
 

@@ -13,7 +13,6 @@ class inputFile:
             contador = 1
 
             for linea in code.split():
-                #print("linea",linea)
                 if("//" in linea and comentarios==False):
                     lineaToString = linea.replace(linea[linea.find("//"):-1], "")
                     lineaToString = ' '.join(lineaToString.split())
@@ -124,9 +123,6 @@ class inputFile:
                 archivoString = []
                 print("Error, está mal comentareado")
         return archivoString
-                    
-# hola = convertirArchivo("/Users/andreareyes/Desktop/compiladores/Compiler/files/prueba.decaf")
-# print(hola)
 
 
 

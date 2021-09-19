@@ -8,28 +8,31 @@ class Scanner:
 
     # simbolos.append(simb.Symbol(id, reggex, "nombre"))
     # separamos class program por como leemos el input
-    simbolos.append(simb.Symbol(1,"class","class"))
-    simbolos.append(simb.Symbol(2,"Program","Program"))
+    simbolos.append(simb.Symbol(1,"class", "<class>"))
+    simbolos.append(simb.Symbol(2,"Program", "<Program>"))
     # Palabras Reservadas
-    simbolos.append(simb.Symbol(3,"boolean|break|callout|continue|else|for|if|int|return|void","reservedW"))
+    simbolos.append(simb.Symbol(3,"boolean|break|callout|continue|else|for|if|int|return|void", "<reservedW>"))
     # Signos
-    simbolos.append(simb.Symbol(4,":|;|(|)|,|[|]|{|}|[]","signos"))
-    simbolos.append(simb.Symbol(5,"!|$|%|&|*|+|.|/|>|=|<|?|@|\|^|-|<=|>=","operadores"))
+    simbolos.append(simb.Symbol(4,":|;|(|)|,|[|]|{|}|[]", "<signos>"))
+    simbolos.append(simb.Symbol(5,"!|$|%|&|*|+|.|/|>|=|<|?|@|\|^|-|<=|>=", "<operadores>"))
     # operadores
-    simbolos.append(simb.Symbol(6,"==|!=","equalityOperatos"))
-    simbolos.append(simb.Symbol(7,"=|+=|-=","assignOperators"))
-    simbolos.append(simb.Symbol(8,"&&|||","conditionOperators"))
-    simbolos.append(simb.Symbol(9, "true|false", "boolLiteral"))
+    simbolos.append(simb.Symbol(6,"==|!=", "<equalityOperatos>"))
+    simbolos.append(simb.Symbol(7,"=|+=|-=", "<assignOperators>"))
+    simbolos.append(simb.Symbol(8,"&&|||", "<conditionOperators>"))
+    simbolos.append(simb.Symbol(9, "true|false", "<boolLiteral>"))
     # Estos los comparamos con las palabras 
-    simbolos.append(simb.Symbol(10,"","id"))
-    simbolos.append(simb.Symbol(11,"","stringLiteral"))
-    simbolos.append(simb.Symbol(12,"","charLiteral"))
-    simbolos.append(simb.Symbol(13,"","Token no valido"))
-    simbolos.append(simb.Symbol(14,"","intLiteral"))
+    simbolos.append(simb.Symbol(10,"", "<id>"))
+    simbolos.append(simb.Symbol(11,"", "<intLiteral>"))
+    simbolos.append(simb.Symbol(12,"", "<stringLiteral>"))
+    simbolos.append(simb.Symbol(13,"", "<charLiteral>"))
+    simbolos.append(simb.Symbol(14,"", "<Token no valido>"))
 
     def scanner(self, codigo, debug):
         tokens = []
+        prettyTokens = []
         errores = []
+        # bonitos = simb.__()
+        # print("bonitos", self.simbolos[13])
         for lista in codigo: # codigo - lista de listas
             palabra = lista[0].split(" ") # lista = ["cosas", id]
             for item in palabra:
@@ -38,6 +41,7 @@ class Scanner:
 
                 # si es igual a algun simbolo ya entrcomo token
                 if item == "class" : 
+                    prettyTokens.append(tk.Tokens(self.simbolos[1], id, item))
                     tokens.append(tk.Tokens(self.simbolos[1], id, item))
                     error = False
                 elif item == "Program" : 
@@ -79,12 +83,12 @@ class Scanner:
                         tokens.append(tk.Tokens(self.simbolos[10], id, item))
                         error = False
                     if (dfa.accepting("int", item)):
-                        tokens.append(tk.Tokens(self.simbolos[10], id, item))
+                        tokens.append(tk.Tokens(self.simbolos[11], id, item))
                         error = False
 
                 # si error se mantiene True
                 if error:
-                    errorStr = "Error Lexico: error en la linea" + str(id)
+                    errorStr = "Error Lexico: error en la linea " + str(id)
                     errores.append(errorStr)
         if debug:
             for token in tokens:
