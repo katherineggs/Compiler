@@ -23,10 +23,10 @@ def ayuda():
 
 def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
     #opciones
-    if(stage == "scanner"):
+    if stage == "scanner" :
         debug = False
         #debug
-        if(("scannner" in debugStage)):
+        if "scan" == debugStage :
             debug = True
         inp = inputFile.inputFile()
         #scanner y leer tokens inputFile
@@ -50,17 +50,17 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
         print("\n ----------------------------")
 
 if __name__ == "__main__":
-    inputCodigo = ""
-    nombreArchivo = "out"
-    stage = "scanner"
-    optStage = ""
-    debugStage = []
+    inputCodigo = ""   # file de entrada
+    nombreArchivo = "" # nombre del archivo output
+    stage = ""         # Scanner, Parse ...
+    optStage = ""      # Constant / Algebraic
+    debugStage = ""    # Ahora solo es una fase cambiar a otra cosa
     
-    if (len(sys.argv) >= 4 and len(sys.argv) % 2 == 0):
+    if (len(sys.argv) >= 4) and (len(sys.argv) % 2 == 0):
         valido = True
         inputCodigo = sys.argv[1]
         for i in range(2, len(sys.argv)):
-            if(i % 2 == 0):
+            if(i % 2 == 0): # los pares son los tag
                 if(sys.argv[i] == '-o'):
                     nombreArchivo = sys.argv[i+1]
                 elif(sys.argv[i] == '-target'):
@@ -68,16 +68,15 @@ if __name__ == "__main__":
                 elif(sys.argv[i] == '-opt'):
                     optStage = sys.argv[i+1]
                 elif(sys.argv[i] == '-debug'):
-                    string_stages = sys.argv[i+1].split(":")
-                    debugStage = string_stages
+                    debugStage = sys.argv[i+1]
                 else:
                     valido = False
                     print('invalid param')
                     ayuda()
-        if(valido):
+        if valido:
             execute(inputCodigo, nombreArchivo, stage, optStage, debugStage)
 
-    elif (len(sys.argv) == 2):
+    elif len(sys.argv) == 2:
         inputCodigo = sys.argv[1]
         execute(inputCodigo, nombreArchivo, stage, optStage, debugStage)
     else:

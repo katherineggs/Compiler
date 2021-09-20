@@ -13,70 +13,70 @@ class inputFile:
             contador = 1
 
             for linea in code.split():
-                if("//" in linea and comentarios==False):
+                if "//" in linea and comentarios==False:
                     lineaToString = linea.replace(linea[linea.find("//"):-1], "")
                     lineaToString = ' '.join(lineaToString.split())
 
                     if(lineaToString != ""):
                         archivoString.append([lineaToString, contador])
                 
-                elif("/*" in linea):
+                elif "/*" in linea:
                     comentarios = True
-                elif("*/" in linea):
+                elif "*/" in linea:
                     comentarios = False
-                elif(comentarios==False):
+                elif comentarios==False:
                     lineaToString = linea
                     cont = 0
                     for caracter in lineaToString:
-                        if(caracter == "+" or caracter == "=" or caracter == "-" or caracter == "<" or caracter == ">" or caracter == "!"):
+                        if caracter == "+" or caracter == "=" or caracter == "-" or caracter == "<" or caracter == ">" or caracter == "!":
                             try:
-                                if(caracter=='+'):
-                                    if(lineaToString[cont - 1] != '+'):
+                                if caracter=='+':
+                                    if lineaToString[cont - 1] != '+':
                                         lineaToString = lineaToString[:cont] + " " + lineaToString[cont] + lineaToString[cont + 1:]
                                         cont = cont+1
 
-                                    if(lineaToString[cont+1] != '+' and lineaToString[cont+1] != '='):
+                                    if lineaToString[cont+1] != '+' and lineaToString[cont+1] != '=':
                                         lineaToString = lineaToString[:cont] + lineaToString[cont] + " " + lineaToString[cont + 1:]
                                         cont = cont + 1
 
-                                if(caracter=='='):
-                                        if(lineaToString[cont-1] != '=' and lineaToString[cont-1] != '+' and lineaToString[cont-1] != '-' and lineaToString[cont-1] != '<' and lineaToString[cont-1] != '>' and lineaToString[cont-1] != '!'):
+                                if caracter=='=':
+                                        if lineaToString[cont-1] != '=' and lineaToString[cont-1] != '+' and lineaToString[cont-1] != '-' and lineaToString[cont-1] != '<' and lineaToString[cont-1] != '>' and lineaToString[cont-1] != '!':
                                             lineaToString = lineaToString[:cont] + " " + lineaToString[cont] + lineaToString[cont + 1:]
                                             cont = cont+ 1
 
-                                        if(lineaToString[cont+1] != '='):
+                                        if lineaToString[cont+1] != '=':
                                             lineaToString  = lineaToString[:cont] + lineaToString[cont] + " " + lineaToString[cont + 1:]
                                             cont = cont+1  
 
-                                if(caracter=='-'):
-                                        if(lineaToString[cont-1] != '-'):
+                                if caracter=='-':
+                                        if lineaToString[cont-1] != '-':
                                             lineaToString = lineaToString[:cont] + " " + lineaToString[cont] + lineaToString[cont + 1:]
                                             cont = cont+1 
-                                        if(lineaToString[cont+1] != '-' and lineaToString[cont+1] != '='):
+                                        if lineaToString[cont+1] != '-' and lineaToString[cont+1] != '=':
                                             lineaToString = lineaToString[:cont] + lineaToString[cont] + " " + lineaToString[cont + 1:]
                                             cont = cont+1 
 
-                                if(caracter=='<'):
+                                if caracter=='<':
                                     lineaToString = lineaToString[:cont] + " " + lineaToString[cont] + lineaToString[cont + 1:]
                                     cont = cont+1 
 
-                                    if(lineaToString[cont+1] != '='):
+                                    if lineaToString[cont+1] != '=':
                                         lineaToString = lineaToString[:cont] + lineaToString[cont] + " " + lineaToString[cont + 1:]
                                         cont = cont+1 
 
-                                if(caracter=='>'):
+                                if caracter=='>':
                                     lineaToString = lineaToString[:cont] + " " + lineaToString[cont] + lineaToString[cont + 1:]
                                     cont = cont+1 
 
-                                    if(lineaToString[cont+1] != '='):
+                                    if lineaToString[cont+1] != '=':
                                         lineaToString = lineaToString = lineaToString[:cont] + lineaToString[cont] + " " + lineaToString[cont + 1:]
                                         cont = cont+1 
 
-                                if(caracter=='!'): 
+                                if caracter=='!': 
                                     lineaToString = lineaToString[:cont] + " " + lineaToString[cont] + lineaToString[cont + 1:]
                                     cont = cont+1 
 
-                                    if(lineaToString[cont+1] != '='):
+                                    if lineaToString[cont+1] != '=':
                                         lineaToString = lineaToString[:cont] + lineaToString[cont] + " " + lineaToString[cont + 1:]
                                         cont = cont+1 
 
@@ -88,38 +88,37 @@ class inputFile:
                         cont = cont+1
 
                     for caracter in lineaToString:
-                        if(caracter=="%" or caracter=="/"
-                                or caracter=="*" or caracter=="(" or caracter==")" or caracter=="{" or caracter=="}" or caracter==";" or caracter==","):
+                        if caracter=="%" or caracter=="/" or caracter=="*" or caracter=="(" or caracter==")" or caracter=="{" or caracter=="}" or caracter==";" or caracter==",":
                                 lineaToString = lineaToString.replace(lineaToString[lineaToString.index(caracter)], " "+lineaToString[lineaToString.index(caracter)]+" ")
                             
-                    if("+=" in lineaToString):
+                    if "+=" in lineaToString:
                             lineaToString = lineaToString.replace("+=", " += ")
-                    elif("==" in lineaToString):
+                    elif "==" in lineaToString:
                         lineaToString = lineaToString.replace("==", " == ")
-                    elif("-=" in lineaToString):
+                    elif "-=" in lineaToString:
                         lineaToString = lineaToString.replace("-=", " -= ")                    
-                    elif("<=" in lineaToString):
+                    elif "<=" in lineaToString:
                         lineaToString = lineaToString.replace("<=", " <= ")  
-                    elif(">=" in lineaToString):
+                    elif ">=" in lineaToString:
                         lineaToString = lineaToString.replace(">=", " >= ")  
-                    elif("!=" in lineaToString):
+                    elif "!=" in lineaToString:
                         lineaToString = lineaToString.replace("!=", " != ")  
-                    elif("||" in lineaToString):
+                    elif "||" in lineaToString:
                         lineaToString = lineaToString.replace("||", " || ")  
-                    elif("&&" in lineaToString):
+                    elif "&&" in lineaToString:
                         lineaToString = lineaToString.replace("&&", " && ")  
-                    elif("++" in lineaToString):
+                    elif "++" in lineaToString:
                         lineaToString = lineaToString.replace("++", " ++ ")
-                    elif("--" in lineaToString):
+                    elif "--" in lineaToString:
                         lineaToString = lineaToString.replace("--", " -- ")
                     lineaToString = ' '.join(lineaToString.split())
-                    if(lineaToString!=""):
+                    if lineaToString!="":
                         archivoString.append([lineaToString, contador])
                 
                 contador = contador + 1
 
             archivo.close()
-            if(comentarios==True):
+            if comentarios==True:
                 archivoString = []
                 print("Error, está mal comentareado")
         return archivoString

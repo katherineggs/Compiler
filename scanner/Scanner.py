@@ -66,6 +66,6 @@ class Scanner:
             for token in tokens:
                 print(token.prettyPrint())
             for error in errores:
-                print(error)
+                print("Error -",error)
 
         return tokens, errores

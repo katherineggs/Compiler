@@ -9,7 +9,7 @@ class Tokens:
     def prettyPrint(self):
         # simb = Symbols.Symbol()
         prettyPrint = "• Tipo Símbolo: " + str(self.tipoSimbolo) + ", línea: " + str(self.id) 
-        if(self.value != ""):
+        if self.value != "":
             prettyPrint += ", Atributo: " + self.value + " "
         else:
             prettyPrint += " -"
