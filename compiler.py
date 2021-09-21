@@ -23,7 +23,7 @@ def ayuda():
 
 def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
     #opciones
-    if stage == "scanner" :
+    if stage == "scanner" or stage == "":
         debug = False
         #debug
         if "scanner" == debugStage :
