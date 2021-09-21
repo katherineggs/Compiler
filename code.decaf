@@ -1,0 +1,20 @@
+class Program { 
+        //variables
+        int x, y;
+        int result
+        boolean verificar;
+
+        int suma(){
+            x = "10";
+            y = 3
+            result = x + y;
+        }
+
+        void main() {
+            // procedimiento
+            if ( y>x){
+                verificar = true;
+            }
+            //fin
+        }
+            }

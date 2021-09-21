@@ -26,7 +26,7 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
     if stage == "scanner" :
         debug = False
         #debug
-        if "scan" == debugStage :
+        if "scanner" == debugStage :
             debug = True
         inp = inputFile.inputFile()
         #scanner y leer tokens inputFile
@@ -36,6 +36,10 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
         scan = scanner.Scanner()
         listaTokens, listaErrores = scan.scanner(leerArchivo, debug)
         printTokens = []
+        if optStage == "constant":
+            printTokens.append("optimizing: constant folding")
+        if optStage == "algebraic":
+            printTokens.append("optimizing: algebraic simplification")
 
         for token in listaTokens:
             printTokens.append(token.prettyPrint())
@@ -50,11 +54,11 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
         print("\n ----------------------------")
 
 if __name__ == "__main__":
-    inputCodigo = ""   # file de entrada
-    nombreArchivo = "" # nombre del archivo output
-    stage = ""         # Scanner, Parse ...
-    optStage = ""      # Constant / Algebraic
-    debugStage = ""    # Ahora solo es una fase cambiar a otra cosa
+    inputCodigo = ""    # file de entrada
+    nombreArchivo = ""  # nombre del archivo output
+    stage = ""          # Scanner, Parse ...
+    optStage = ""       # Constant / Algebraic
+    debugStage = ""     # Ahora solo es una fase cambiar a otra cosa
     
     if (len(sys.argv) >= 4) and (len(sys.argv) % 2 == 0):
         valido = True
@@ -77,8 +81,11 @@ if __name__ == "__main__":
             execute(inputCodigo, nombreArchivo, stage, optStage, debugStage)
 
     elif len(sys.argv) == 2:
-        inputCodigo = sys.argv[1]
-        execute(inputCodigo, nombreArchivo, stage, optStage, debugStage)
+        if sys.argv[1] == "-h":
+            ayuda()
+        else:
+            inputCodigo = sys.argv[1]
+            execute(inputCodigo, nombreArchivo, stage, optStage, debugStage)
     else:
         ayuda()
 

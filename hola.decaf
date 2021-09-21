@@ -1,36 +1,20 @@
-// comment 
 
-class Program { //hola
-        int x, y;
-        int y[5];
-        int k;
-        int j;
-        boolean a;
+class Program { //hola mundo
+    int x;
+    int y [ 5 ];
+    int numeros;
 
-        int myFunction(){
-            x = 4;
-            if(x>2){
-                k=0;
-            }
+    int funcionX(){ 
+        |
+        x = 4";
+    }
+
+    void main() {
+        if ( x>0) {
+            x+=1;
+            numeros= "fresas ; // comentario X
+            boolNuevo = "5"; 
         }
-
-        void main() {
-                    if ( x>0) {
-                        x+=1;
-                        x=y+1;
-                        j="hola";
-                        //ñ;
-                        x=3;
-                        char1='a'; boolean b=true;
-                        /* hola
-    hola
-            SOMOS COMMENT
-    hola
-*/
-                    }
-                    return;
-/* hola
-    hola
-*/
-        }
-            }
+                return;
+    }
+}

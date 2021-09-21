@@ -51,16 +51,21 @@ class Scanner:
                 else:
                     dfa = Accepting.Accepting()
 
-                    if (dfa.accepting("id", item)):
+                    # Verificamos que si es un string contenga los dos
+                    if ('"') in item:
+                        if str(item).startswith('"') and str(item).endswith('"'):
+                            item = item.replace('"',"")
+                            
+                    if dfa.accepting("id", item):
                         tokens.append(tk.Tokens(sList.TypeSList.simbolos[10], id, item))
                         error = False
-                    if (dfa.accepting("int", item)):
+                    if dfa.accepting("int", item):
                         tokens.append(tk.Tokens(sList.TypeSList.simbolos[11], id, item))
                         error = False
 
                 # si error se mantiene True
                 if error:
-                    errorStr = "Error Lexico: error en la linea " + str(id)
+                    errorStr = "Error Lexico: error en la linea " + str(id) + " con el item " + str(item)
                     errores.append(errorStr)
         if debug:
             for token in tokens:
