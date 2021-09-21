@@ -5,7 +5,7 @@ class Program { //hola mundo
     int numeros;
 
     int funcionX(){ 
-        |
+        | //caracter ilegal
         x = 4";
     }
 
