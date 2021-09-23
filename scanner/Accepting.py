@@ -4,7 +4,10 @@ class Accepting:
     def accepting(self, tipoDFA, palabra):
         if tipoDFA == 'id':
             movimientos = dfa.DFAs.DFAid
-            inicio = "A"
+            if palabra[0].isdigit():
+                inicio = "B"
+            else:
+                inicio = "A"
             accept = {"A", "B", "C"}
         elif tipoDFA=='int':
             movimientos = dfa.DFAs.DFAint

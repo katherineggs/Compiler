@@ -1,6 +1,6 @@
 
 class Program { //hola mundo
-    int x;
+    int x55;
     int y [ 5 ];
     int numeros;
 

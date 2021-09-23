@@ -35,7 +35,9 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
 
         scan = scanner.Scanner()
         listaTokens, listaErrores = scan.scanner(leerArchivo, debug)
+
         printTokens = []
+        
         if optStage == "constant":
             printTokens.append("optimizing: constant folding")
         if optStage == "algebraic":

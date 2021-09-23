@@ -13,8 +13,8 @@ class Program {
         void main() {
             // procedimiento
             if ( y>x){
-                verificar = true;
+                verificar = "true";
             }
             //fin
         }
-            }
+            } 
