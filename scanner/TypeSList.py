@@ -12,7 +12,8 @@ class TypeSList:
     simbolos.append(simb.Symbol(3,"boolean|break|callout|continue|else|for|if|int|return|void", "<reservedW>"))
     # Signos
     simbolos.append(simb.Symbol(4,":|;|(|)|,|[|]|{|}|[]", "<signos>"))
-    simbolos.append(simb.Symbol(5,"!|$|%|&|*|+|.|/|>|=|<|?|@|\|^|-|<=|>=", "<operadores>"))
+    simbolos.append(simb.Symbol(5,"<|>|<=|>=|+|-|*|/|%", "<operadores>"))
+
     # operadores
     simbolos.append(simb.Symbol(6,"==|!=", "<equalityOperatos>"))
     simbolos.append(simb.Symbol(7,"=|+=|-=", "<assignOperators>"))
@@ -24,3 +25,7 @@ class TypeSList:
     simbolos.append(simb.Symbol(12,"", "<stringLiteral>"))
     simbolos.append(simb.Symbol(13,"", "<charLiteral>"))
     simbolos.append(simb.Symbol(14,"", "<Token no valido>"))
+    
+    #RelOp
+    simbolos.append(simb.Symbol(15,"<|>|<=|>=", "<relationOperators>"))
+    
