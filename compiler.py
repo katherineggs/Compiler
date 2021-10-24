@@ -2,6 +2,7 @@
 import scanner.Scanner as scanner
 import files.inputFile as inputFile
 import files.outputFile as outputFile
+import parser.Parser as parser
 
 import sys
 
@@ -23,11 +24,12 @@ def ayuda():
 
 def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
     #opciones
-    if stage == "scanner" or stage == "":
+    if stage == "scanner" or stage == "parser" or stage == "":
         debug = False
         #debug
-        if "scanner" == debugStage :
+        if "scanner" in debugStage:
             debug = True
+
         inp = inputFile.inputFile()
         #scanner y leer tokens inputFile
         leerArchivo = inp.convertirArchivo(inputCodigo)
@@ -54,13 +56,27 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
             print(error)
 
         print("\n ----------------------------")
+    
+    if stage == "parser":
+        debug = False
+        #debug
+        if "parser" in debugStage :
+            debug = True
+    
+        parse = parser.Parser()
+
+        listaErrores = parse.parser(listaTokens, debug)
+
+        # Generar output
+        out.outputFile(listaErrores, nombreArchivoOut)
+
 
 if __name__ == "__main__":
     inputCodigo = ""    # file de entrada
     nombreArchivo = ""  # nombre del archivo output
     stage = ""          # Scanner, Parse ...
     optStage = ""       # Constant / Algebraic
-    debugStage = ""     # Ahora solo es una fase cambiar a otra cosa
+    debugStage = []     # Ahora solo es una fase cambiar a otra cosa
     
     if (len(sys.argv) >= 4) and (len(sys.argv) % 2 == 0):
         valido = True
@@ -74,7 +90,7 @@ if __name__ == "__main__":
                 elif(sys.argv[i] == '-opt'):
                     optStage = sys.argv[i+1]
                 elif(sys.argv[i] == '-debug'):
-                    debugStage = sys.argv[i+1]
+                    debugStage = sys.argv[i+1].split(":")
                 else:
                     valido = False
                     print('invalid param')

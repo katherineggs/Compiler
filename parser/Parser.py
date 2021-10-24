@@ -77,4 +77,5 @@ class Parser:
         if debug:
             print(listaErrores)
 
-        return mainParser, listaErrores
+        # siguiente devolver Main
+        return listaErrores
