@@ -3,7 +3,7 @@ from anytree import RenderTree
 from anytree.exporter import DotExporter
 
 class FieldDecl:
-    def __init__(self, nodo = "", tipo = "field_decl", lista = ""):
+    def __init__(self, nodo = "", tipo = "fieldDecl", lista = ""):
         self.nodo = nodo
         self.tipo = tipo
         self.lista = lista
