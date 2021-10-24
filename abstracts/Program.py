@@ -1,7 +1,4 @@
 from anytree import Node as Node_any
-from anytree import RenderTree
-from anytree.exporter import DotExporter
-import objects.IrtNode as IrtNode
 
 class Program:
 
@@ -25,17 +22,6 @@ class Program:
             if (len(nodoL.lista)!=0):
                 cont = nodoL.getNodes(self.nodosCompletos, cont, nodoAny)
    
-    def obtNodosAllIrt(self):
-        self.irtLista.append(IrtNode.IrtNode("Program", ["StartProgram"]))
-
-        cont=0
-        for nodoL in self.lista:
-            nodoL.getIrtInstructions(self.irtLista, self.symbolTabla, cont)
-            cont+=1
-
-        self.irtLista.append(IrtNode.IrtNode("Program", ["EndProgram"]))
-
-
     def obtFieldDeclList(self):
         return self.lista[3].lista
 

@@ -1,6 +1,4 @@
 from anytree import Node as Node_any
-from anytree import RenderTree
-from anytree.exporter import DotExporter
 
 class Block:
     def __init__(self, nodo = "", tipo = "block", lista = ""):

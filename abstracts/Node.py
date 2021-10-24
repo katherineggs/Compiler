@@ -1,7 +1,4 @@
 from anytree import Node as Node_any
-from anytree import RenderTree
-from anytree.exporter import DotExporter
-
 
 class Nodo:
     def __init__(self, nodo, tipo, lista):
