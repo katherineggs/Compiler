@@ -1,0 +1,5 @@
+Parse error: Token inesperado , linea - 3
+Parse error: No hay suficientes tokens en la declaracion! linea - 3
+Parse error: Token inesperado , linea - 5
+Parse error: Token inesperado x linea - 8
+Parse error: Token inesperado y linea - 15

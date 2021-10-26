@@ -9,7 +9,7 @@ class TypeSList:
     simbolos.append(simb.Symbol(1,"class", "<class>"))
     simbolos.append(simb.Symbol(2,"Program", "<Program>"))
     # Palabras Reservadas
-    simbolos.append(simb.Symbol(3,"boolean|break|callout|continue|else|for|if|int|return|void", "<reservedW>"))
+    simbolos.append(simb.Symbol(3,"break|callout|continue|else|for|if|return|void", "<reservedW>"))
     # Signos
     simbolos.append(simb.Symbol(4,":|;|(|)|,|[|]|{|}|[]", "<signos>"))
     simbolos.append(simb.Symbol(5,"<|>|<=|>=|+|-|*|/|%", "<operadores>"))
@@ -26,6 +26,5 @@ class TypeSList:
     simbolos.append(simb.Symbol(13,"", "<charLiteral>"))
     simbolos.append(simb.Symbol(14,"", "<Token no valido>"))
     
-    #RelOp
-    simbolos.append(simb.Symbol(15,"<|>|<=|>=", "<relationOperators>"))
+    simbolos.append(simb.Symbol(15, "boolean|int", "<type>"))
     

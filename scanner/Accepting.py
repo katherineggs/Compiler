@@ -1,5 +1,6 @@
 # Accepting de los DFAs
 import scanner.DFAs as dfa
+
 class Accepting:    
     def accepting(self, tipoDFA, palabra):
         if tipoDFA == 'id':

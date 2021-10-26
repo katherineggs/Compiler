@@ -23,7 +23,7 @@ class Scanner:
                     error = False
 
                 # Palabras reservadas
-                elif item == "boolean" or item == "break" or item == "callout" or item == "continue" or item == "else" or item == "for" or item == "if" or item == "int" or item == "return" or item == "void": 
+                elif item == "break" or item == "callout" or item == "continue" or item == "else" or item == "for" or item == "if"  or item == "return" or item == "void": 
                     tokens.append(tk.Tokens(sList.TypeSList.simbolos[2], id, item))
                     error = False
 
@@ -47,6 +47,9 @@ class Scanner:
                     error = False
                 elif item == "true" or item == "false": 
                     tokens.append(tk.Tokens(sList.TypeSList.simbolos[8], id, item))
+                    error = False
+                elif item == "boolean" or item == "int" or item == "char" or item == "string":
+                    tokens.append(tk.Tokens(sList.TypeSList.simbolos[14], id, item))
                     error = False
 
                 # Vemos si nuestro DFA lo acepta como token

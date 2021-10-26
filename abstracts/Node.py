@@ -1,4 +1,4 @@
-from anytree import Node as Node_any
+from anytree import Node as nodeImp
 
 class Nodo:
     def __init__(self, nodo, tipo, lista):
@@ -77,16 +77,13 @@ class Nodo:
     def obtNodos(self, Program, cont, nodoPrinc):
         if len(self.lista) != 0 and self.tipo != '' :
             for nodoL in self.lista: # nodo de lista
-                nodoAny = Node_any(nodoL.tipo + ' ' + str(cont), parent = nodoPrinc)
+                nodoAnyT = nodeImp(nodoL.tipo + ' ' + str(cont), parent = nodoPrinc)
                 Program.append(nodoL.tipo + ' ' + str(cont))
                 cont += 1
                 if len(nodoL.lista) != 0 :
-                    cont = nodoL.obtNodos(Program, cont, nodoAny)
+                    cont = nodoL.obtNodos(Program, cont, nodoAnyT)
         return cont
     
-    def checkTipo(self, simbs, cont, listaErrores):
-        print(simbs, cont, listaErrores)
-
     def obtTipo(self, simbs, listaErrores):
         if self.tipo == 'expr' :
             if self.lista[0].tipo == 'location' :
@@ -179,3 +176,6 @@ class Nodo:
                 return "boolean"
         else:   
             return "default"
+
+    def checkTipo(self, simbs, cont, listaErrores):
+        print(simbs, cont, listaErrores)

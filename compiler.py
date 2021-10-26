@@ -2,7 +2,7 @@
 import scanner.Scanner as scanner
 import files.inputFile as inputFile
 import files.outputFile as outputFile
-import parser.Parser as parser
+import parser1.Parser as parser
 
 import sys
 
@@ -68,7 +68,7 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
         listaErrores = parse.parser(listaTokens, debug)
 
         # Generar output
-        out.outputFile(listaErrores, nombreArchivoOut)
+        out.outputFile(listaErrores, str(nombreArchivoOut+"P"))
 
 
 if __name__ == "__main__":

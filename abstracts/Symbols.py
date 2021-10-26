@@ -1,4 +1,4 @@
-class Symbol:
+class Symbol: 
 
     def __init__(self, identificador, regEx, nommbre):
         self.identificador = identificador

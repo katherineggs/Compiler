@@ -1,12 +1,12 @@
 
 class Program { //hola mundo
     int x55;
-    int y [ 5 ];
+    int y;
     int numeros;
 
     int funcionX(){ 
         | //caracter ilegal
-        x = 4";
+        x = 4"
     }
 
     void main() {
@@ -14,7 +14,7 @@ class Program { //hola mundo
             x+=1;
             numeros= "fresas ; // comentario X
             boolNuevo = "5"; 
-        }
+        
                 return;
     }
 }
