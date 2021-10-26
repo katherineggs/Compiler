@@ -5,11 +5,8 @@ class Program:
     def __init__(self, lista):
         self.lista = lista
         self.type = "Program"
-        self.symbolTabla = []
         self.nodosCompletos = []
         self.ProgramTree = ''
-        self.irtLista = []
-        self.puntero = 0
 
     def obtNodosAll(self):
         ProgramUI = Node_any("Program")

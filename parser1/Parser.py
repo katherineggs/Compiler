@@ -6,6 +6,7 @@ from anytree import RenderTree
 
 class Parser:
     def parser(self, tokens, debug):
+        # program es el lugar peincipal en donde todo se almacena
         mainParser = Program.Program(['', '', '', '', '', ''])
         listaErrores = []
         lenTokens = len(tokens)
@@ -20,10 +21,10 @@ class Parser:
             if tokens[1].tipoSimbolo.regEx != 'Program' :
                 listaErrores.append("Parse error, Falta - regEx of class token")
 
-            if '{' not in tokens[2].tipoSimbolo.regEx :
+            if '{' != tokens[2].value :
                 listaErrores.append("Parse error, Falta - first { token")
 
-            if '}' not in tokens[lenTokens-1].tipoSimbolo.regEx :
+            if '}' != tokens[lenTokens-1].value :
                 listaErrores.append("Parse error, Falta - last closing } token")
             
             # si empieza bien
@@ -69,7 +70,7 @@ class Parser:
                         listaMethodNodo.append(Nodo.Nodo(token, token.value, [])) 
 
                     methodNodo = Nodo.Nodo("<listaMethod>", "listaMethod", listaMethodNodo)
-                    # llenamos el lista[4] con todo lo demas
+                    # llenamos el lista[4] con los metodos de la clase
                     mainParser.lista[4] = methodNodo
                     ya = True # la lista de program esta llena
         if ya:

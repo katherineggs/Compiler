@@ -25,6 +25,7 @@ def ayuda():
 def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
     #opciones
     if stage == "scanner" or stage == "parser" or stage == "":
+        print("\n---------------SCANNER \n")
         debug = False
         #debug
         if "scanner" in debugStage:
@@ -33,7 +34,7 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
         inp = inputFile.inputFile()
         #scanner y leer tokens inputFile
         leerArchivo = inp.convertirArchivo(inputCodigo)
-        print("\n\n ----------------------------")
+        print("\n\n --- errores ---\n")
 
         scan = scanner.Scanner()
         listaTokens, listaErrores = scan.scanner(leerArchivo, debug)
@@ -55,9 +56,10 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
         for error in listaErrores:
             print(error)
 
-        print("\n ----------------------------")
+        print("\n ---")
     
-    if stage == "parser":
+    if stage == "parser" or stage == "":
+        print("\n---------------PARSER \n")
         debug = False
         #debug
         if "parser" in debugStage :
