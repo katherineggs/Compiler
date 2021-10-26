@@ -1,9 +1,8 @@
-import abstracts.Symbols as Symbol
-import abstracts.Tokens as Token
 import abstracts.Node as Nodo
 import abstracts.Program as Program
 import parser1.ParseMethods as ParseMethods
 import re
+from anytree import RenderTree
 
 class Parser:
     def parser(self, tokens, debug):
@@ -78,21 +77,23 @@ class Parser:
             parseM.fieldParse(mainParser, mainParser.lista[3], 'fieldList', debug, listaErrores)
             parseM.metParse(mainParser, mainParser.lista[4], 'listaMethod', debug, listaErrores)
 
-            # lenamos el lista[5] con el parse del block
-            for method in mainParser.obtMethodDeclList(): # for i in lista[4]
-                method.lista[5] = parseM.blockParse(mainParser, method.lista[5], debug, listaErrores)
-
-        parseM.accepts(tokens)
-
-        if debug:
-            print(listaErrores)
-
-        print("LISTA MAIN")
+        print("\nLISTA MAIN")
         for i in mainParser.lista:
             try:
                 print(i.nodo.prettyPrint())
             except:
-                print(i.nodo)
+                print("• ",i.nodo)
+                # for j in i.lista:
+                #     for nodo in j.lista:
+                #         for var in nodo.lista:
+                #             print(var.nodo.prettyPrint())
+        print("")
+        
+        # ARBOL
+        mainParser.obtNodosAll()
+        ast = mainParser.ProgramTree
+        for pre, fill, node in RenderTree(ast):
+            print("%s%s" % (pre, node.name))
 
         # siguiente devolver Main
         return listaErrores

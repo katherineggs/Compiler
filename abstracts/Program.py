@@ -20,7 +20,7 @@ class Program:
             self.nodosCompletos.append(nodoL.tipo + ' ' +str(cont))
             cont+=1
             if (len(nodoL.lista)!=0):
-                cont = nodoL.getNodes(self.nodosCompletos, cont, nodoAny)
+                cont = nodoL.obtNodos(self.nodosCompletos, cont, nodoAny)
    
     def obtFieldDeclList(self):
         return self.lista[3].lista

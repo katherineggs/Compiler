@@ -68,7 +68,7 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
         listaErrores = parse.parser(listaTokens, debug)
 
         # Generar output
-        out.outputFile(listaErrores, str(nombreArchivoOut+"P"))
+        out.outputFile(listaErrores, str(nombreArchivoOut+"Parse"))
 
 
 if __name__ == "__main__":

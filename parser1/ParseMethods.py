@@ -6,7 +6,7 @@ import abstracts.Block as block
 import parser1.DFAs as gramm
 
 class ParseMethods:
-
+    # Variables de la clase
     def fieldParse(self, Program, nodoPrinc, tipoDFA, debug, listaErrores):
         lista = nodoPrinc.lista
 
@@ -71,7 +71,7 @@ class ParseMethods:
 
         if debug :
             print("Lista Errores", listaErrores)
-
+    # todo lo demas
     def metParse(self, Program, nodoPrinc, tipoDFA, debug, listaErrores):
         listaMethod = []
         lista = nodoPrinc.lista
@@ -151,6 +151,9 @@ class ParseMethods:
                             if countM == len(lista) -2 :
                                 blockHijos.append(lista[countM])
                                 blockHijos.append(lista[countM+1])                              
+                        # print("BLOCK")
+                        # for i in blockHijos:
+                        #     print(i.nodo.prettyPrint())
                         
                         # Nodo block
                         blockObj = block.Block()
@@ -161,215 +164,3 @@ class ParseMethods:
             Program.lista[4] = nodoPrinc
         if debug:
             print(listaErrores)
-
-    def blockParse(self, Program, nodoPrinc, debug, listaErrores):
-        nodoPrincipal = nodoA.Nodo("$", "$", [])
-        states = [0]
-        stackNodos = [nodoPrincipal]
-
-        revisarLista = nodoPrinc.lista
-
-        # for i in revisarLista:
-        #     print(i.nodo.prettyPrint())
-        
-        tamanoRev = len(revisarLista)
-        contB = 0
-        ultEstado = states[-1]
-        parametros = []
-        nodoActual = revisarLista[ultEstado]
-        parametros = gramm.DFAs.dfa.get(ultEstado).get(nodoActual.tipo)
-        print("TIPO")
-        print(nodoActual.tipo)
-        print(gramm.DFAs.dfa.get(ultEstado))
-        print("PARAMETROS")
-        print(parametros)
-
-        if parametros == None :
-            listaErrores.append("Parse error: FALTA { linea - " + str(nodoActual.nodo.id))
-
-        contWhile = 0
-        while contB < tamanoRev and contWhile < 15 :
-            if parametros != None :
-                if parametros[0] == 'shift' :
-                    stackNodos.append(nodoActual)
-                    states.append(parametros[1])
-                    contB += 1
-                    nodoActual = revisarLista[contB]
-                    parametros = gramm.DFAs.dfa.get(states[-1]).get(nodoActual.tipo)
-
-                elif parametros[0] == 'goTo' :
-                    # no al stack
-                    states.append(parametros[1])
-                    # se mantiene el nodo y los param
-                    nodoActual = revisarLista[contB]
-                    parametros = gramm.DFAs.dfa.get(states[-1]).get(nodoActual.tipo)
-
-                elif parametros[0] == 'reduce' :
-                    if parametros[1] == 2 :  
-                        temp = []
-                        abrir = ""
-                        for nod in stackNodos[::-1]:
-                            print("NOD.TIPO")
-                            print(nod.tipo)
-                            if nod.tipo == "statement" :
-                                temp.append(nod)
-                            elif nod.tipo == "{" :
-                                abrir = nod
-                                break
-                            else:
-                                listaErrores.append("Parsing error, Elemento inesperado " + nod.tipo)
-                                break
-
-                        statementNodos = nodoA.Nodo("statementList", "statementList", temp[::-1])
-                        blockNodo = nodoA.Nodo("block", "block", [abrir, statementNodos, revisarLista[contB]])
-                        count = len(temp) + 1
-                        stackNodos = stackNodos[:-count]
-                        states = states[:-(count)]
-                        stackNodos.append(blockNodo)
-                        contB += 1
-
-                        parametros = gramm.DFAs.dfa.get(states[-1]).get(blockNodo.tipo)
-
-                    else:
-                        nodo = list(gramm.DFAs.gramatica[parametros[1]-1].keys())[0]
-                        tipo = list(gramm.DFAs.gramatica[parametros[1]-1].keys())[0]
-                        count = len(list(gramm.DFAs.gramatica[parametros[1]-1].values())[0])
-
-                        listaHijos = stackNodos[-count:]
-
-                        stackNodos = stackNodos[:-count]
-
-                        states = states[:-(count)]
-                        nuevoN = nodoA.Nodo(nodo, tipo, listaHijos)
-
-                        stackNodos.append(nuevoN)
-                        parametros = gramm.DFAs.dfa.get(states[-1]).get(nuevoN.tipo)
-
-                        if parametros != None and parametros[0] == 'goTo' and parametros[1] == 32 :
-                            if stackNodos[-1].tipo == "expr" and stackNodos[-2].tipo == "!" :
-                                parametros = ['goTo', 58]
-
-                        if parametros != None and parametros[0] == 'goTo' and parametros[1] == 32 :
-                            if stackNodos[-1].tipo == "expr" and stackNodos[-2].tipo == "menos" and stackNodos[-3].tipo != "expr" :
-                                parametros = ['goTo', 58]
-
-                        if parametros != None and parametros[0] == 'goTo' and parametros[1] == 32 :
-                            if revisarLista[contB].tipo == "{" and stackNodos[-1].tipo == "expr" and stackNodos[-2].tipo == "," and stackNodos[-3].tipo == "expr" :
-                                parametros = ['goTo', 81]
-
-                        if parametros != None and parametros[0] == 'goTo' and parametros[1] == 32 :
-                            if revisarLista[contB].tipo == ")" and stackNodos[-1].tipo == "expr" and stackNodos[-2].tipo == "(" and stackNodos[-3].tipo != "if" :
-                                parametros = ['goTo', 59]
-
-                        if parametros != None and parametros[0] == 'goTo' and parametros[1] == 32 :
-                            if stackNodos[-1].tipo == "expr" and stackNodos[-2].tipo == "menos" and stackNodos[-3].tipo == "expr" :
-                                parametros = ['goTo', 69]
-
-                        if parametros != None and parametros[0] == 'goTo' and parametros[1] == 32 :
-                            if stackNodos[-1].tipo == "expr" and stackNodos[-2].tipo == "binOp" and stackNodos[-3].tipo == "expr" :
-                                parametros = ['goTo', 69]
-
-                        if parametros != None and parametros[0] == 'goTo' and parametros[1] == 32 :
-                            if revisarLista[contB].tipo == ")" and stackNodos[-1].tipo == "expr" and stackNodos[-2].tipo == "(" and stackNodos[-3].tipo == "if" :
-                                parametros = ['goTo', 44]
-
-                        if parametros != None and parametros[0] == 'goTo' and parametros[1] == 32 :
-                            if revisarLista[contB].tipo == "," and stackNodos[-1].tipo == "expr" and stackNodos[-2].tipo == "assignOperators" :
-                                parametros = ['goTo', 65]
-
-                elif parametros[0] == 'accept' :
-                    print("Aceptado!")
-            else:
-                # Estado no definido
-                if contB < len(revisarLista):
-                    listaErrores.append("Parse error: Token inesperado " + revisarLista[contB].tipo + " linea - " + str(revisarLista[contB].nodo.id))
-                else:
-                    listaErrores.append("Parse error: Token inesperado " + revisarLista[contB-1].tipo + " linea - " + str(revisarLista[contB-1].nodo.id))
-                break
-
-        if debug :
-            print(listaErrores)
-
-        if len(listaErrores) == 0 :
-            return stackNodos[-1]
-        else:
-            return nodoA.Nodo("block", "block", [])
-    
-    def accepts(self, listaTokens):
-        state = 0
-        contAccepts = 0
-        parametros=[]
-
-        print(len(listaTokens))
-
-        tokenActual = listaTokens[contAccepts].tipoSimbolo.nommbre
-        parametros = gramm.DFAs.dfa.get(state).get(tokenActual)
-
-        print(parametros)
-
-        while contAccepts <= len(listaTokens) :
-            #print(listaTokens[contAccepts].tipoSimbolo.nommbre)
-            print(state)
-            if parametros != None :
-                if parametros[0] == 'shift' :
-                    tokenActual = listaTokens[contAccepts].tipoSimbolo.nommbre
-                    gramm.DFAs.tokens.append(tokenActual)
-                    parametros = gramm.DFAs.dfa.get(gramm.DFAs.states[-1]).get(tokenActual)
-                    gramm.DFAs.states.append(parametros[1])
-                    contAccepts += 1
-
-                    if contAccepts < len(listaTokens) :
-                        tokenActual = listaTokens[contAccepts].tipoSimbolo.nommbre
-                    parametros = gramm.DFAs.dfa.get(gramm.DFAs.states[-1]).get(tokenActual)
-                    print("shift")
-
-                elif parametros[0] == 'goTo' :
-                    print(tokenActual)
-                    print(parametros[1])
-                    gramm.DFAs.states.append(parametros[1])
-                    
-                    if contAccepts < len(listaTokens) :
-                        tokenActual = listaTokens[contAccepts].tipoSimbolo.nommbre
-                        parametros = gramm.DFAs.dfa.get(gramm.DFAs.states[-1]).get(tokenActual)
-                    else:
-                        print(parametros)
-                        gramm.DFAs.tokens.pop(-1)
-                        gramm.DFAs.states.pop(-1)
-                        break
-                    print('goTo')
-                
-                elif parametros[0] == 'reduce' :
-                    print(parametros[1])
-                    node = nodoA.Nodo(list(gramm.DFAs.gramaticaProgram[parametros[1]-1].keys())[0], list(gramm.DFAs.gramaticaProgram[parametros[1]-1].values())[0])
-                    count = len(list(gramm.DFAs.gramaticaProgram[parametros[1]-1].values())[0])
-                    gramm.DFAs.tokens = gramm.DFAs.tokens[:-count]
-                    gramm.DFAs.states = gramm.DFAs.states[:-(count)]
-                    gramm.DFAs.tokens.append(list(gramm.DFAs.gramaticaProgram[parametros[1]-1].keys())[0])
-                    tokenActual = gramm.DFAs.tokens[-1]
-                    print(gramm.DFAs.states)
-                    parametros = gramm.DFAs.dfa.get(gramm.DFAs.states[-1]).get(tokenActual)
-
-                    print("Lista nodos", node.listaTokens)
-                    print("Nodo - ", node)
-                    print("reduce")
-
-                elif parametros[0] == 'accept' :
-                    print("Acepatdo!")
-            else:
-                print("Estado no definido")
-                if contAccepts < len(listaTokens) :
-                    print("Token inesperado",listaTokens[contAccepts].tipoSimbolo.nommbre," linea - ",listaTokens[contAccepts].id)
-                else:
-                    print("Token inesperado",listaTokens[contAccepts-1].tipoSimbolo.nommbre," linea - ",listaTokens[contAccepts-1].id)
-                break
-            print(gramm.DFAs.tokens)
-            print(gramm.DFAs.states)
-            print("------")
-
-        print(gramm.DFAs.states)
-        print(gramm.DFAs.tokens)
-        if(len(gramm.DFAs.tokens)==1 and len(gramm.DFAs.states)==1):
-            print("Parseo Completo")
-        else:
-            print("Parseo Invalido")
-        return True
