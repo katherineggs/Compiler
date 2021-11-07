@@ -10,13 +10,17 @@ class ParseMethods:
     def fieldParse(self, Program, nodoPrinc, tipoDFA, debug, listaErrores):
         lista = nodoPrinc.lista
 
+        # print("Field")
+        # for i in lista:
+        #     print(i.nodo.prettyPrint())
+
         if tipoDFA == 'fieldList' :
             listaNodos0 = []
             contBsN = 0
             listacontB = []
             
             for i in lista:
-                if ';' in i.nodo.tipoSimbolo.regEx :
+                if ';' == i.nodo.value :
                     listacontB.append(contBsN) # append del index que tenga ;
                 contBsN += 1          
 
@@ -28,53 +32,70 @@ class ParseMethods:
                 else:
                     # demas vars desde id hasta ;
                     listaField.append(lista[listacontB[split - 1] + 1:listacontB[split] + 1])
-                    
-            for fieldDecl in listaField: #nodos
-                if len(fieldDecl) < 3 : # minio deben haber 3 -- type id ;
-                    listaErrores.append("Parse error: No hay suficientes tokens en la declaracion! linea - " + str(fieldDecl[0].nodo.id))
+
+            # print("Lista Field")            
+            # for i in listaField:
+            #     print("lista")
+            #     print(i)
+            #     for lis in i:
+            #         print(lis.nodo.prettyPrint())
+            
+            for varDecl in listaField: #nodos
+                if len(varDecl) < 3 : # minio deben haber 3 -- type id ;
+                    listaErrores.append("Parse error: No hay suficientes tokens en la declaracion! linea - " + str(varDecl[0].nodo.id))
                 
-                if len(fieldDecl) == 3 :
-                    if fieldDecl[0].nodo.tipoSimbolo.nommbre != '<type>' :
-                        listaErrores.append("Parse error: Token inesperado " + fieldDecl[0].nodo.tipoSimbolo.nommbre + " linea - " + str(fieldDecl[0].nodo.id))
-                    if fieldDecl[1].nodo.tipoSimbolo.nommbre != '<id>' :
-                        listaErrores.append("Parse error: Token inesperado " + fieldDecl[1].nodo.tipoSimbolo.nommbre + " linea - " + str(fieldDecl[1].nodo.id))
-                    if ';' != fieldDecl[2].nodo.value :
-                        listaErrores.append("Parse error: Token inesperado " + fieldDecl[2].nodo.value + " linea - " + str(fieldDecl[2].nodo.id))
-                    if fieldDecl[0].nodo.tipoSimbolo.nommbre == '<type>' and fieldDecl[1].nodo.tipoSimbolo.nommbre == '<id>' and ';' == fieldDecl[2].nodo.value :
+                if len(varDecl) == 3 :
+                    if varDecl[0].nodo.tipoSimbolo.nommbre != '<type>' :
+                        listaErrores.append("Parse error: Token inesperado " + varDecl[0].nodo.tipoSimbolo.nommbre + " linea - " + str(varDecl[0].nodo.id))
+                    if varDecl[1].nodo.tipoSimbolo.nommbre != '<id>' :
+                        listaErrores.append("Parse error: Token inesperado " + varDecl[1].nodo.tipoSimbolo.nommbre + " linea - " + str(varDecl[1].nodo.id))
+                    if ';' != varDecl[2].nodo.value :
+                        listaErrores.append("Parse error: Token inesperado " + varDecl[2].nodo.value + " linea - " + str(varDecl[2].nodo.id))
+                    if varDecl[0].nodo.tipoSimbolo.nommbre == '<type>' and varDecl[1].nodo.tipoSimbolo.nommbre == '<id>' and ';' == varDecl[2].nodo.value :
                         objField = field.FieldDecl()
-                        listaNodos0.append(nodoA.Nodo(objField, "fieldDecl", [fieldDecl[0], fieldDecl[1], fieldDecl[2]]))
+                        listaNodos0.append(nodoA.Nodo(objField, "varDecl", [varDecl[0], varDecl[1], varDecl[2]]))
                 
-                if len(fieldDecl) > 3 :
+                if len(varDecl) > 3 :
                     idField = []
                     idSeguir = True
-                    if fieldDecl[0].nodo.tipoSimbolo.nommbre != '<type>' :
-                        listaErrores.append("Parse error: Token inesperado " + fieldDecl[0].nodo.tipoSimbolo.nommbre + " linea - " + str(fieldDecl[0].nodo.id))
+                    if varDecl[0].nodo.tipoSimbolo.nommbre != '<type>' :
+                        listaErrores.append("Parse error: Token inesperado " + varDecl[0].nodo.tipoSimbolo.nommbre + " linea - " + str(varDecl[0].nodo.id))
                         idSeguir = False
-                    for i in range(1, len(fieldDecl)-1): #quitamos type y ;
-                        if i % 2 != 0: # si es par
-                            if fieldDecl[i].nodo.tipoSimbolo.nommbre != '<id>' :
-                                listaErrores.append("Parse error: Token inesperado " + fieldDecl[i].nodo.tipoSimbolo.nommbre + " linea - " + str(fieldDecl[i].nodo.id))
+                    
+                    for i in range(1, len(varDecl)-1):  #quitamos type y ;
+                        if i % 2 != 0: # no es par VER SI TIENE ID
+                            if varDecl[i].nodo.tipoSimbolo.nommbre != '<id>' :
+                                listaErrores.append("Parse error: Token inesperado " + varDecl[i].nodo.tipoSimbolo.nommbre + " linea - " + str(varDecl[i].nodo.id))
                                 idSeguir = False
                             else:
-                                idField.append(fieldDecl[i])
+                                idField.append(varDecl[i])
                         else:
-                            if ',' != fieldDecl[i].nodo.value :
-                                listaErrores.append("Parse error: Token inesperado " + "," + " linea - " + str(fieldDecl[i].nodo.id))
+                            if ',' != varDecl[i].nodo.value :
+                                if varDecl[i].nodo.tipoSimbolo.nommbre == "<type>":
+                                    listaErrores.append("Parse error: Token inesperado falta " + ";" + " linea - " + str(varDecl[i].nodo.id-1))
+                                
+                                else:
+                                    listaErrores.append("Parse error: Token inesperado falta " + "," + " linea - " + str(varDecl[i].nodo.id))
                                 idSeguir = False
+
                     if idSeguir :
                         for i in idField:
                             objField = field.FieldDecl()
-                            listaNodos0.append(nodoA.Nodo(objField, "fieldDecl", [fieldDecl[0], i, fieldDecl[len(fieldDecl)-1]]))
+                            listaNodos0.append(nodoA.Nodo(objField, "varDecl", [varDecl[0], i, varDecl[len(varDecl)-1]]))
 
             nodoPrinc.lista = listaNodos0
             Program.lista[3] = nodoPrinc
 
         if debug :
             print("Lista Errores", listaErrores)
-    # todo lo demas
+    # las funcs o todo lo demas 
     def metParse(self, Program, nodoPrinc, tipoDFA, debug, listaErrores):
         listaMethod = []
         lista = nodoPrinc.lista
+
+        # print("Method")
+        # for i in lista[:-3]:
+        #     print(i.nodo.prettyPrint())
 
         if len(lista) < 6 : #type, id,(, ), {, }
             listaErrores.append("Parse error: su method no tiene suficientes tokens!")
@@ -87,7 +108,8 @@ class ParseMethods:
                 listaErrores.append("Parse error: Token inesperado " + lista[2].nodo.value + " linea - " + str(lista[2].nodo.id))
             
             for indexsN in range(len(lista)) :
-                if indexsN < (len(lista) - 3) : # los ult 3 no
+                # print(indexsN)
+                if indexsN < (len(lista) - 3) : # los ult 2 no
                     # if - type id (
                     if (lista[indexsN].nodo.tipoSimbolo.nommbre == "<type>" or "void" == lista[indexsN].nodo.value) and lista[indexsN+1].nodo.tipoSimbolo.nommbre == "<id>" and "(" == lista[indexsN+2].nodo.value:
                         # Nodo method 
@@ -146,6 +168,9 @@ class ParseMethods:
                         if "{" == lista[countM].nodo.value  :
                             # despues de { que no sea id & (
                             while not(lista[countM+1].nodo.tipoSimbolo.nommbre == "<id>" and "(" == lista[countM+2].nodo.value) and countM<len(lista)-2:
+                                # print(lista[countM+1].nodo.prettyPrint())
+                                # print(lista[countM+2].nodo.prettyPrint())
+                                # print("s")
                                 blockHijos.append(lista[countM])
                                 countM += 1
                             if countM == len(lista) -2 :
@@ -164,3 +189,126 @@ class ParseMethods:
             Program.lista[4] = nodoPrinc
         if debug:
             print(listaErrores)
+
+    def blockParse(self, Program, nodoPrinc, debug, listaErrores):
+        nodoPrincipal = nodoA.Nodo("$", "$", [])
+        states = [0]
+        stackNodos = [nodoPrincipal.nodo]
+
+        revisarLista = nodoPrinc.lista
+
+        # print("LISTA")
+        # for i in revisarLista:
+        #     # for j in i:
+        #     print(i.nodo.prettyPrint())
+                
+        tamanoRev = len(revisarLista)
+        contB = 0
+        ultEstado = states[-1]
+        nodoActual = revisarLista[ultEstado]
+
+        while contB < tamanoRev-1 : # FALTA EL ULTIMO } ----------------------------------
+            param = nodoActual.nodo.tipoSimbolo.nommbre
+            param = param.replace("<","")
+            param = param.replace(">","")
+            
+            # SHIFT
+            if param != "signos" :
+                if param == "reservedW":
+                    stackNodos.append(nodoActual.nodo.value)
+                else:
+                    stackNodos.append(param)
+            else:
+                stackNodos.append(nodoActual.nodo.value)
+            
+            contB += 1
+            nodoActual = revisarLista[contB]
+            # stackNodos = recMethod(stackNodos)
+            
+
+            # print("\nO",stackNodos)
+
+            tamanoStack = len(stackNodos)
+            for item in gramm.DFAs.gramatica:
+                stack2 = stackNodos.copy() 
+                for k,v in item.items():
+
+                    contValue = 0
+                    while contValue <= tamanoStack:
+                        if v == stack2:
+                            #REDUCE
+                            stackNodos = stackNodos[:-len(v)] 
+                            stackNodos.append(k)
+                            
+                            newT = len(stackNodos)
+                            for it in gramm.DFAs.gramatica:
+                                stack3 = stackNodos.copy()
+                                for a,b in it.items():
+                                    miniCont = 0
+                                    while miniCont <= newT:
+                                        if b == stack3:
+                                            #REDUCE
+                                            stackNodos = stackNodos[:-len(b)] 
+                                            stackNodos.append(a)
+                                            break
+                                        else:
+                                            if len(stack3) > 0:
+                                                # print("else")
+                                                stack3.pop(0)
+                                            else:
+                                                break
+                                        miniCont += 1
+                            
+                            # print("F",stackNodos)
+                            # print("BUENAaaaas----------------------------\n")
+                            break
+                        else:
+                            if len(stack2) > 0:
+                                # print("else")
+                                stack2.pop(0)
+                            else:
+                                break
+                        contValue += 1
+                        # print(contValue)
+        
+        print(stackNodos)
+        # print(stackNodos[2:])
+        # result = all(element == stackNodos[2] for element in stackNodos[2:])
+        # print(result)
+            
+
+        # print("\nSTACK")
+        # for i in stackNodos:
+        #     print(i)
+
+        if debug :
+            print(listaErrores)
+
+        if len(listaErrores) == 0 :
+            return stackNodos[-1]
+        else:
+            return nodoA.Nodo("block", "block", [])
+
+def recMethod(stackNodos):
+    tamanoStack = len(stackNodos)
+    for item in gramm.DFAs.gramatica:
+        stack2 = stackNodos.copy() 
+        for k,v in item.items():
+            contValue = 0
+            while contValue <= tamanoStack:
+                if v == stack2:
+                    #REDUCE
+                    stackNodos = stackNodos[:-len(v)] 
+                    stackNodos.append(k)
+                    recMethod(stackNodos)
+                    print("F",stackNodos)
+                    break
+                else:
+                    if len(stack2) > 0:
+                        # print("else")
+                        stack2.pop(0)
+                    else:
+                        break
+                contValue += 1
+    return stackNodos
+

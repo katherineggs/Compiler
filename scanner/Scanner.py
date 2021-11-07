@@ -31,7 +31,7 @@ class Scanner:
                 elif item == ":" or item == ";" or item == "(" or item == ")" or item == "," or item == "[" or item == "]" or item == "{" or item == "}" or item == "[]" : 
                     tokens.append(tk.Tokens(sList.TypeSList.simbolos[3], id, item))
                     error = False
-                elif item == "!" or item == "$" or item == "%" or item == "&" or item == "*" or item == "+" or item == "." or item == "/" or item == ">" or item == "=" or item == "<" or item == "?" or item == "@" or item == "^" or item == "-" or item == "<=" or item == ">=": 
+                elif item == "%" or  item == "*" or item == "+" or item == "/" or item == ">" or item == "<" or item == "^" or item == "-" or item == "<=" or item == ">=": 
                     tokens.append(tk.Tokens(sList.TypeSList.simbolos[4], id, item))
                     error = False
 

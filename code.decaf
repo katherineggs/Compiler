@@ -1,12 +1,12 @@
 class Program { 
         //variables
-        int x, y;
-        int result
+        int x, y,z;
+        int result;
         boolean verificar;
 
         int suma(){
             x = "10";
-            y = 3
+            y = 3;
             result = x + y;
         }
 
@@ -15,6 +15,6 @@ class Program {
             if ( y>x){
                 verificar = "true";
             }
-            //fin
         }
-            } 
+
+    } 

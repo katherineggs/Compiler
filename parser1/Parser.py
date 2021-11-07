@@ -77,24 +77,34 @@ class Parser:
             parseM = ParseMethods.ParseMethods()
             parseM.fieldParse(mainParser, mainParser.lista[3], 'fieldList', debug, listaErrores)
             parseM.metParse(mainParser, mainParser.lista[4], 'listaMethod', debug, listaErrores)
-
-        print("\nLISTA MAIN")
-        for i in mainParser.lista:
-            try:
-                print(i.nodo.prettyPrint())
-            except:
-                print("• ",i.nodo)
-                # for j in i.lista:
-                #     for nodo in j.lista:
-                #         for var in nodo.lista:
-                #             print(var.nodo.prettyPrint())
-        print("")
         
-        # ARBOL
-        mainParser.obtNodosAll()
-        ast = mainParser.ProgramTree
-        for pre, fill, node in RenderTree(ast):
-            print("%s%s" % (pre, node.name))
+        # llenamos el lista[5] con el parse del block
+        for bloque in mainParser.obtMethodDeclList(): # for i in bloques
+            bloque.lista[5] = parseM.blockParse(mainParser, bloque.lista[5], debug, listaErrores)
+
+        # parseM.accepts(tokens)
+
+        if debug:
+            print(listaErrores)
+            print("------------------------")
+
+        # print("\nLISTA MAIN")
+        # for i in mainParser.lista:
+        #     try:
+        #         print(i.nodo.prettyPrint())
+        #     except:
+        #         print("• ",i.nodo)
+        #         # for j in i.lista:
+        #         #     for nodo in j.lista:
+        #         #         for var in nodo.lista:
+        #         #             print(var.nodo.prettyPrint())
+        # print("")
+        
+        # # ARBOL
+        # mainParser.obtNodosAll()
+        # ast = mainParser.ProgramTree
+        # for pre, fill, node in RenderTree(ast):
+        #     print("%s%s" % (pre, node.name))
 
         # siguiente devolver Main
         return listaErrores
