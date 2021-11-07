@@ -3,6 +3,7 @@ import scanner.Scanner as scanner
 import files.inputFile as inputFile
 import files.outputFile as outputFile
 import parser1.Parser as parser
+import semantic.Semantic as semantic
 
 import sys
 
@@ -24,7 +25,7 @@ def ayuda():
 
 def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
     #opciones
-    if stage == "scanner" or stage == "parser" or stage == "":
+    if stage == "scanner" or stage == "parser" or stage == "" or stage=="semantic":
         debug = False
         #debug
         if "scanner" in debugStage:
@@ -57,7 +58,7 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
 
         print("\n ----------------------------")
     
-    if stage == "parser":
+    if stage == "parser" or stage=="semantic":
         debug = False
         #debug
         if "parser" in debugStage :
@@ -65,10 +66,22 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
     
         parse = parser.Parser()
 
-        listaErrores = parse.parser(listaTokens, debug)
+        mainProgram, listaErrores = parse.parser(listaTokens, debug)
 
         # Generar output
         out.outputFile(listaErrores, str(nombreArchivoOut+"Parse"))
+
+    if stage=="semantic":
+        debug = False
+
+        if("semantic" in debugStage):
+            debug = True
+
+        smtic = semantic.Semantic()
+        listaErrores = smtic.semantic(mainProgram, debug)
+        
+        # Generar output
+        out.outputFile(listaErrores, str(nombreArchivoOut+"Semantic"))
 
 
 if __name__ == "__main__":
