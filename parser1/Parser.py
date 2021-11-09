@@ -101,10 +101,10 @@ class Parser:
         # print("")
         
         # # ARBOL
-        # mainParser.obtNodosAll()
-        # ast = mainParser.ProgramTree
-        # for pre, fill, node in RenderTree(ast):
-        #     print("%s%s" % (pre, node.name))
+        mainParser.obtNodosAll()
+        ast = mainParser.ProgramTree
+        for pre, fill, node in RenderTree(ast):
+            print("%s%s" % (pre, node.name))
 
         # siguiente devolver Main
         return mainParser, listaErrores

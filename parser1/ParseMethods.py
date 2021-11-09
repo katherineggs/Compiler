@@ -194,6 +194,7 @@ class ParseMethods:
         nodoPrincipal = nodoA.Nodo("$", "$", [])
         # states = [0]
         stackNodos = [nodoPrincipal.nodo]
+        listaStack = [nodoPrincipal.nodo]
 
         revisarLista = nodoPrinc.lista
 
@@ -220,6 +221,8 @@ class ParseMethods:
                     stackNodos.append(param)
             else:
                 stackNodos.append(nodoActual.nodo.value)
+
+            listaStack.append(nodoActual)
             
             contB += 1
 
@@ -234,8 +237,16 @@ class ParseMethods:
                             #REDUCE
                             stackNodos = stackNodos[:-len(v)] 
                             stackNodos.append(k)
+
+                            nodo = (k)
+                            tipo = (k)
+
+                            listaHijos = listaStack[-len(v):]
+                            nuevoN = nodoA.Nodo(nodo, tipo, listaHijos)
+
+                            listaStack = listaStack[:-len(v)]
+                            listaStack.append(nuevoN)
                             
-                            # print("M",stackNodos)
                             
                             newT = len(stackNodos)
                             for it in gramm.DFAs.gramatica:
@@ -247,6 +258,16 @@ class ParseMethods:
                                             #REDUCE
                                             stackNodos = stackNodos[:-len(b)] 
                                             stackNodos.append(a)
+
+                                            nodo2 = (a)
+                                            tipo2 = (a)
+
+                                            listaHijos2 = listaStack[-len(b):]
+                                            nuevoN2 = nodoA.Nodo(nodo2, tipo2, listaHijos2)
+
+                                            listaStack = listaStack[:-len(b)]
+                                            listaStack.append(nuevoN2)
+
                                             break
                                         else:
                                             if len(stack3) > 0:
@@ -269,6 +290,14 @@ class ParseMethods:
                         # print(contValue)
         
         print(stackNodos)
+        print("")
+    
+        # for i in listaStack[1].lista:
+        #     try :
+        #         print(i.nodo.prettyPrint())
+        #     except:
+        #         print(i.lista)
+
         # print(stackNodos[2:])
         # result = all(element == stackNodos[2] for element in stackNodos[2:])
         # print(result)
@@ -282,8 +311,8 @@ class ParseMethods:
             print(listaErrores)
 
         if len(listaErrores) == 0 :
-            return stackNodos[-1]
-        else:
+            return listaStack[-1]
+        else: # si hay errores
             return nodoA.Nodo("block", "block", [])
 
 def recMethod(stackNodos):
