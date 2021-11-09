@@ -107,4 +107,4 @@ class Parser:
         #     print("%s%s" % (pre, node.name))
 
         # siguiente devolver Main
-        return listaErrores
+        return mainParser, listaErrores

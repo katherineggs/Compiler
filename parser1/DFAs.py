@@ -32,7 +32,7 @@ class DFAs:
         {'statement': ['return', 'expr', ';']},                            # return algo
         {'statement': ['break', ';']},                                     # break 
         {'statement': ['continue', ';']},                                  #
-        {'statement': ['block']},                                          # block
+        # {'statement': ['block']},                                          # block
         {'statement': ['varDecl']},               #15                         # varDecl
         # --------- Expr -------------
         {'expr': ['location']}, 

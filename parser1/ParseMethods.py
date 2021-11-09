@@ -192,7 +192,7 @@ class ParseMethods:
 
     def blockParse(self, Program, nodoPrinc, debug, listaErrores):
         nodoPrincipal = nodoA.Nodo("$", "$", [])
-        states = [0]
+        # states = [0]
         stackNodos = [nodoPrincipal.nodo]
 
         revisarLista = nodoPrinc.lista
@@ -204,10 +204,10 @@ class ParseMethods:
                 
         tamanoRev = len(revisarLista)
         contB = 0
-        ultEstado = states[-1]
-        nodoActual = revisarLista[ultEstado]
 
-        while contB < tamanoRev-1 : # FALTA EL ULTIMO } ----------------------------------
+        while contB < tamanoRev :
+            nodoActual = revisarLista[contB]
+
             param = nodoActual.nodo.tipoSimbolo.nommbre
             param = param.replace("<","")
             param = param.replace(">","")
@@ -222,11 +222,6 @@ class ParseMethods:
                 stackNodos.append(nodoActual.nodo.value)
             
             contB += 1
-            nodoActual = revisarLista[contB]
-            # stackNodos = recMethod(stackNodos)
-            
-
-            # print("\nO",stackNodos)
 
             tamanoStack = len(stackNodos)
             for item in gramm.DFAs.gramatica:
@@ -239,6 +234,8 @@ class ParseMethods:
                             #REDUCE
                             stackNodos = stackNodos[:-len(v)] 
                             stackNodos.append(k)
+                            
+                            # print("M",stackNodos)
                             
                             newT = len(stackNodos)
                             for it in gramm.DFAs.gramatica:
