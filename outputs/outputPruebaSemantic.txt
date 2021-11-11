@@ -1,0 +1,2 @@
+Error Semántico, Uniqueness check: Variable no declarada en la línea 9
+Type error: if sin condición boolean

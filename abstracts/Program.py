@@ -5,6 +5,8 @@ class Program:
     def __init__(self, lista):
         self.lista = lista
         self.type = "Program"
+        self.simbs = []
+        self.puntero = 0
         self.nodosCompletos = []
         self.ProgramTree = ''
 

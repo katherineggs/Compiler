@@ -1,4 +1,5 @@
 from anytree import Node as nodeImp
+from scanner.TypeSList import TypeSList
 
 class Nodo:
     def __init__(self, nodo, tipo, lista):
@@ -86,6 +87,8 @@ class Nodo:
     
     def obtTipo(self, simbs, listaErrores):
         if self.tipo == 'expr' :
+            # print("\nSELF")
+            # print(self.lista[0].tipo)
             if self.lista[0].tipo == 'location' :
                 tipoFinal = ""
                 for i in simbs[::-1]:
@@ -95,7 +98,7 @@ class Nodo:
                             break
                 return tipoFinal
 
-            if self.lista[0].tipo == 'method_call' :
+            if self.lista[0].tipo == 'methodCall' :
                 tipoFinal = ""
                 for i in simbs[::-1]:
                     for j in i:
@@ -116,25 +119,32 @@ class Nodo:
 
             if self.lista[0].tipo == 'expr' :
                 if self.lista[1].tipo == 'binOp' :
-                    if self.lista[1].lista[0].tipo == 'operadores' :
-                        if self.lista[0].obtTipo(simbs, listaErrores) == "int" and self.lista[2].obtTipo(simbs, listaErrores) == "int" :
+                    if self.lista[1].lista[0].tipo == "+|-|*|/|%": #arith
+                        if self.lista[0].obtTipo(simbs, listaErrores) == "int" and self.lista[2].obtTipo(simbs, listaErrores) == "int":
                             return "int"
                         else:
-                            listaErrores.append("Type error: cannot arit_op two things !int")
+                            listaErrores.append("Type error: No se pueden operar dos ints diferentes")
                             return "typeError"
 
-                    if self.lista[1].lista[0].tipo == 'equalityOperatos' :
+                    if self.lista[1].lista[0].tipo in "<|>|<=|>=" : # relation
+                        if self.lista[0].obtTipo(simbs, listaErrores) == "int" and self.lista[2].obtTipo(simbs, listaErrores) == "int":
+                            return "boolean"
+                        else:
+                            listaErrores.append("Type error: No se pueden operar dos elementos que no sean int")
+                            return "typeError"
+
+                    if self.lista[1].lista[0].tipo  in TypeSList.simbolos[5].regEx : # eq
                         if self.lista[0].obtTipo(simbs, listaErrores) == self.lista[2].obtTipo(simbs, listaErrores) :
                             return "boolean"
                         else:
-                            listaErrores.append("Type error: cannot eq_op two things with diff type")
+                            listaErrores.append("Type error: No se pueden operar diferentes tipos")
                             return "typeError"
 
-                    if self.lista[1].lista[0].tipo == 'conditionOperators' :
+                    if self.lista[1].lista[0].tipo  in TypeSList.simbolos[7].regEx : #cond
                         if self.lista[0].obtTipo(simbs, listaErrores) == "boolean" and self.lista[2].obtTipo(simbs, listaErrores) == "boolean" :
                             return "boolean"
                         else:
-                            listaErrores.append("Type error: cannot cond_op two things !boolean")
+                            listaErrores.append("Type error: No se pueden operar dos boolean diferentes")
                             return "typeError"
 
             if self.lista[0].tipo == '!' :
@@ -183,21 +193,25 @@ class Nodo:
 
     #------------------------------------------------------------------------- Semantic
     def analisisSemantico(self, simbs, cont, listaErrores, puntero):
+        fieldDeclTipo = []
         if(len(self.lista)!=0 and self.tipo!=''):
             cont2 = 0
             for node1 in self.lista:
-                # print(type(node1.nodo))
-                if(len(node1.lista)==0 and str(type(node1.nodo)) == "<class 'abstracts.Tokens.Tokens'>" and node1.nodo.tipoSimbolo.name=="id"):
-                    if(cont2!=0 and (self.lista[cont2-1].nodo.tipoSimbolo.name == 'type' or self.lista[cont2-1].nodo.tipoSimbolo.name == 'void')):
+                # print(node1.lista)
+                # print(type(node1))
+                if(len(node1.lista) == 0 and str(type(node1.nodo)) == "<class 'abstracts.Tokens.Tokens'>" and node1.nodo.tipoSimbolo.nommbre == "<id>"):
+                    if(cont2!=0 and (self.lista[cont2-1].nodo.tipoSimbolo.nommbre == '<type>' or self.lista[cont2-1].nodo.value == 'void')):
+                        # Uniqueness check
                         unico = True
                         for verificarSimbolo in simbs[-1]:
+                            #print("verificar sim", verificarSimbolo)
                             if node1.nodo.value == verificarSimbolo[1]:
                                 unico = False
                         if(unico):
                             puntero += 4
-                            simbs[-1].append([self.lista[cont2-1].nodo.value, node1.nodo.value, node1.nodo.line, "$fp-" + str(puntero)])
+                            simbs[-1].append([self.lista[cont2-1].nodo.value, node1.nodo.value, node1.nodo.id, "$fp-" + str(puntero)])
                         else:
-                            listaErrores.append("Semantic error, Uniqueness check: este identificador ya se usa en la línea " + str(node1.nodo.line))
+                            listaErrores.append("Error Semántico, Uniqueness check: este identificador ya se usa en la línea " + str(node1.nodo.id))
                     else:
                         is_decl = False
                         for decls in simbs[::-1]:
@@ -205,105 +219,85 @@ class Nodo:
                                 if node1.nodo.value == decl[1]:
                                     is_decl = True
                         if not(is_decl):
-                            listaErrores.append("Semantic error, Uniqueness check: Var not declared in line "+str(node1.nodo.line))
+                            listaErrores.append("Error Semántico, Uniqueness check: Variable no declarada en la línea "+str(node1.nodo.id))
                 
-                if(len(node1.lista)==0 and str(type(node1.nodo)) == "<class 'abstracts.Tokens.Tokens'>" and node1.nodo.tipoSimbolo.name=="("):
-                    if(cont2!=0 and cont2!=1):
-                        if(self.lista[cont2-1].nodo.tipoSimbolo.name == 'id' and 
-                            (self.lista[cont2-2].nodo.tipoSimbolo.name == 'void' or self.lista[cont2-2].nodo.tipoSimbolo.name == 'type')):
+                if(len(node1.lista) == 0 and str(type(node1.nodo)) == "<class 'abstracts.Tokens.Tokens'>" and node1.nodo.tipoSimbolo.nommbre == "("):
+                    if(cont2 != 0 and cont2 != 1):
+                        # if es una funcion
+                        if(self.lista[cont2-1].nodo.tipoSimbolo.nommbre == '<id>' and 
+                            (self.lista[cont2-2].nodo.tipoSimbolo.value == 'void' or self.lista[cont2-2].nodo.tipoSimbolo.nommbre == '<type>')):
                             simbs.append([])
 
-                if(len(node1.lista)==0 and str(type(node1.nodo)) == "<class 'abstracts.Tokens.Tokens'>" and node1.nodo.tipoSimbolo.name=="{"):
+                if(len(node1.lista) == 0 and str(type(node1.nodo)) == "<class 'abstracts.Tokens.Tokens'>" and node1.nodo.tipoSimbolo.nommbre == "{"):
                     simbs.append([])
 
-                if(len(node1.lista)==0 and str(type(node1.nodo)) == "<class 'abstracts.Tokens.Tokens'>" and node1.nodo.tipoSimbolo.name=="}"):
+                if(len(node1.lista) == 0 and str(type(node1.nodo)) == "<class 'abstracts.Tokens.Tokens'>" and node1.nodo.tipoSimbolo.nommbre == "}"):
                     pass
-                    # print("pop scope")
-                    #del main_program.simbs[-1]
 
                 if(node1.tipo == "expr"):
                     if(len(node1.lista) > 0):
                         if(node1.lista[0].tipo == 'expr'):
-                            if(node1.lista[1].tipo == 'bin_op'):
-
-                                #---- NO TENEMOS ESTAS -------????????????????????????????
-                                if(node1.lista[1].lista[0].tipo == 'arit_op'):
+                            if(node1.lista[1].tipo == 'binOp'):
+                                if(node1.lista[1].lista[0].tipo in TypeSList.simbolos[4].regEx ):
+                                    # print("listaaaaaaa")
+                                    # print(node1.lista[1].lista)
                                     type_exp1 = node1.lista[0].obtTipo(simbs, listaErrores)
                                     type_exp2 = node1.lista[2].obtTipo(simbs, listaErrores)
-                                    if(type_exp1 != "type_error" and type_exp2!="type_error" and 
-                                        type_exp1 != "int" and type_exp2!="int"):
-                                        listaErrores.append("Type error: cannot arit op two !ints")
+                                    if(type_exp1 != "typeError" and type_exp2!="typeError" and type_exp1 != "int" and type_exp2!="int"):
+                                        listaErrores.append("Type Error: No se pueden operar dos ints diferentes")
 
-                                if(node1.lista[1].lista[0].tipo == 'rel_op'):
+                                if(node1.lista[1].lista[0].tipo in TypeSList.simbolos[5].regEx ):
                                     type_exp1 = node1.lista[0].obtTipo(simbs, listaErrores)
                                     type_exp2 = node1.lista[2].obtTipo(simbs, listaErrores)
-                                    if(type_exp1 != "type_error" and type_exp2!="type_error" and 
-                                        type_exp1 != "int" and type_exp2!="int"):
-                                        listaErrores.append("Type error: cannot rel op two !ints")
+                                    if(type_exp1 != "typeError" and type_exp2!="typeError" and type_exp1 != type_exp2):
+                                        listaErrores.append("Type error: No se pueden operar diferentes tipos")
 
-                                if(node1.lista[1].lista[0].tipo == 'eq_op'):
+                                if(node1.lista[1].lista[0].tipo in TypeSList.simbolos[7].regEx ):
                                     type_exp1 = node1.lista[0].obtTipo(simbs, listaErrores)
                                     type_exp2 = node1.lista[2].obtTipo(simbs, listaErrores)
-                                    if(type_exp1 != "type_error" and type_exp2!="type_error" and 
-                                        type_exp1 != type_exp2):
-                                        listaErrores.append("Type error: cannot eq op two things with diff type")
-
-                                if(node1.lista[1].lista[0].tipo == 'cond_op'):
-                                    type_exp1 = node1.lista[0].obtTipo(simbs, listaErrores)
-                                    type_exp2 = node1.lista[2].obtTipo(simbs, listaErrores)
-                                    if(type_exp1 != "type_error" and type_exp2!="type_error" and 
-                                        type_exp1 != "boolean" and type_exp2!="boolean"):
-                                        listaErrores.append("Type error: cannot cond op two things !boolean")
-
-                            elif(node1.lista[1].tipo == 'minus_op'):
-                                    type_exp1 = node1.lista[0].obtTipo(simbs, listaErrores)
-                                    type_exp2 = node1.lista[2].obtTipo(simbs, listaErrores)
-                                    if(type_exp1 != "type_error" and type_exp2!="type_error" and 
-                                        type_exp1 != "int" and type_exp2!="int"):
-                                        listaErrores.append("Type error: cannot minus op two !ints")
-
-                        if(node1.lista[0].tipo == 'minus_op'):
-                            type_exp = node1.lista[1].obtTipo(simbs, listaErrores)
-                            if(type_exp != "type_error" and type_exp!="int"):
-                                listaErrores.append("Type error: cannot minus op a thing that is !int")
-
-                        if(node1.lista[0].tipo == '!'):
-                            type_exp = node1.lista[1].obtTipo(simbs, listaErrores)
-                            if(type_exp != "type_error" and type_exp!="boolean"):
-                                listaErrores.append("Type error: cannot ! op a thing that is !boolean")
-
-                        #---- NO TENEMOS ESTAS -------????????????????????????????
+                                    if(type_exp1 != "typeError" and type_exp2!="typeError" and type_exp1 != "boolean" and type_exp2!="boolean"):
+                                        listaErrores.append("Type error: No se pueden operar dos boolean diferentes")
 
                 if(node1.tipo == "statement"):
+                    #print("statement")
                     if(len(node1.lista) > 0):
                         if(node1.lista[0].tipo == 'if'):
+                            print("-- symbol table")
+                            print(simbs)
+
+                            for tipo in simbs:
+                                fieldDeclTipo.append(tipo[0][0])
+
+                            # print("\n--- tipo")
+                            # print(fieldDeclTipo)
+
                             type_exp = node1.lista[2].obtTipo(simbs, listaErrores)
-                            if(type_exp != "type_error" and type_exp != "boolean"):
-                                listaErrores.append("Type error: cannot IF without boolean")
+                            # print("\n-- Type exp: ", type_exp)
+
+                            if(type_exp != "typeError" and type_exp != "boolean"):
+                                listaErrores.append("Type error: if sin condición boolean")
 
                         if(node1.lista[0].tipo == 'for'):
                             type_exp_1 = node1.lista[3].obtTipo(simbs, listaErrores)
                             type_exp_2 = node1.lista[5].obtTipo(simbs, listaErrores)
                             type_id = node1.lista[1].obtTipo(simbs, listaErrores)
 
-                            if(type_exp_2 != "type_error" and type_exp_2 != "boolean"):
-                                listaErrores.append("Type error: cannot FOR without boolean")
+                            if(type_exp_2 != "typeError" and type_exp_2 != "boolean"):
+                                listaErrores.append("Type error: for sin condición boolean")
 
-                            if(type_exp_1 != "type_error" and type_exp_1 != "int"):
-                                listaErrores.append("Type error: cannot FOR without int decl")
+                            if(type_exp_1 != "typeError" and type_exp_1 != "int"):
+                                listaErrores.append("Type error: int no declarado dentro de for")
 
-                            if(type_id != "type_error" and type_id != "int"):
-                                listaErrores.append("Type error: cannot FOR without id int decl")
+                            if(type_id != "typeError" and type_id != "int"):
+                                listaErrores.append("Type error: id int no declarado detro de for")
                             
                         if(node1.lista[0].tipo == 'location'):
                             location_type = ""
                             type_1 = node1.lista[0].obtTipo(simbs, listaErrores)
                             type_2 = node1.lista[2].obtTipo(simbs, listaErrores)
 
-                            if(type_1 != type_2 and (type_1 != "type_error" and type_2 != "type_error")):
-                                listaErrores.append("Type error: cannot assign " + 
-                                node1.lista[2].obtTipo(simbs, listaErrores) + " in "
-                                + node1.lista[0].obtTipo(simbs, listaErrores))
+                            if(type_1 != type_2 and (type_1 != "typeError" and type_2 != "typeError")):
+                                listaErrores.append("Type error: No se puede asignar " + node1.lista[2].obtTipo(simbs, listaErrores) + " in " + node1.lista[0].obtTipo(simbs, listaErrores))
 
                 cont+=1
                 cont2+=1

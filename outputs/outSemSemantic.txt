@@ -1,0 +1,1 @@
+Type error: if sin resultado boolean
