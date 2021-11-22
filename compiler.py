@@ -89,15 +89,18 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
         out.outputFile(listaErrores, str(nombreArchivoOut+"Semantic"))
 
         ErrSM = len(listaErrores)
+        print("\n ----------------------------")
 
     #
     if(stage == "irt"):
+        print("IRT--------")
         if(ErrS == 0 and ErrP == 0 and ErrSM == 0):
             debug = False
-            if(("irt" in debugStage)):
+            if "irt" in debugStage:
                 debug = True
             irt = Irt.Irt()
             listaIrt = irt.irt(mainProgram, debug)
+            print(listaIrt)
         else:
             print("Hay errores en el error_log")
 

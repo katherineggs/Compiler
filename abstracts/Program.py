@@ -11,6 +11,7 @@ class Program:
         self.puntero = 0
         self.nodosCompletos = []
         self.ProgramTree = ''
+        self.listaIrt = []
 
     def obtNodosAll(self):
         ProgramUI = Node_any("Program")
@@ -34,7 +35,7 @@ class Program:
 
         cont = 0
         for node in self.lista:
-            node.getIrtInstructions(self.listaIrt, self.simbs, cont)
+            node.obtIrtInstructions(self.listaIrt, self.simbs, cont)
             cont += 1
             # if (len(node.lista)!=0):
             #     cont = node.getNodesIrt(self.listaIrt, self.simbs, cont)
