@@ -90,6 +90,7 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
 
         ErrSM = len(listaErrores)
 
+    #
     if(stage == "irt"):
         if(ErrS == 0 and ErrP == 0 and ErrSM == 0):
             debug = False
