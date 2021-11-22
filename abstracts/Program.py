@@ -1,5 +1,7 @@
 from anytree import Node as Node_any
 
+import abstracts.IrtNode as IrtNode
+
 class Program:
 
     def __init__(self, lista):
@@ -26,3 +28,15 @@ class Program:
 
     def obtMethodDeclList(self):
         return self.lista[4].lista 
+
+    def obtNodosAllIrt(self):
+        self.listaIrt.append(IrtNode.IrtNode("Program", ["StartProgram"]))
+
+        cont = 0
+        for node in self.lista:
+            node.getIrtInstructions(self.listaIrt, self.simbs, cont)
+            cont += 1
+            # if (len(node.lista)!=0):
+            #     cont = node.getNodesIrt(self.listaIrt, self.simbs, cont)
+
+        self.listaIrt.append(IrtNode.IrtNode("Program", ["EndProgram"]))
