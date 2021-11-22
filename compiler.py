@@ -4,6 +4,7 @@ import files.inputFile as inputFile
 import files.outputFile as outputFile
 import parser1.Parser as parser
 import semantic.Semantic as semantic
+import irt.Irt as Irt
 
 import sys
 
@@ -25,7 +26,7 @@ def ayuda():
 
 def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
     #opciones
-    if stage == "scanner" or stage == "parser" or stage == "" or stage=="semantic":
+    if stage == "scanner" or stage == "parser" or stage == "" or stage=="semantic" or stage=="irt":
         debug = False
         #debug
         if "scanner" in debugStage:
@@ -52,13 +53,15 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
         # Generar output
         out = outputFile.OutputFile()
         out.outputFile(printTokens, nombreArchivoOut)
+
+        ErrS = len(listaErrores)
         
         for error in listaErrores:
             print(error)
 
         print("\n ----------------------------")
     
-    if stage == "parser" or stage=="semantic":
+    if stage == "parser" or stage=="semantic" or stage=="irt":
         debug = False
         #debug
         if "parser" in debugStage :
@@ -71,7 +74,9 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
         # Generar output
         out.outputFile(listaErrores, str(nombreArchivoOut+"Parse"))
 
-    if stage=="semantic":
+        ErrP = len(listaErrores)
+
+    if stage=="semantic" or stage=="irt":
         debug = False
 
         if("semantic" in debugStage):
@@ -82,6 +87,18 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
         
         # Generar output
         out.outputFile(listaErrores, str(nombreArchivoOut+"Semantic"))
+
+        ErrSM = len(listaErrores)
+
+    if(stage == "irt"):
+        if(ErrS == 0 and ErrP == 0 and ErrSM == 0):
+            debug = False
+            if(("irt" in debugStage)):
+                debug = True
+            irt = Irt.Irt()
+            listaIrt = irt.irt(mainProgram, debug)
+        else:
+            print("Hay errores en el error_log")
 
 
 if __name__ == "__main__":
