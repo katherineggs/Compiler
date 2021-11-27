@@ -310,14 +310,18 @@ class Nodo:
 # ------------------------------------------------------------------------- IRT
     def obtIrtInstructions(self, listaIrt, simbs, cont, etiq=""):
         cont += 1
+        print(self.tipo)
         if(self.tipo == "fieldList"):
             for vari in self.lista:
                 cont = vari.obtIrtInstructions(listaIrt, simbs, cont)
+        
         if(self.tipo == "listaMethod"):
             for methodi in self.lista:
                 cont = methodi.obtIrtInstructions(listaIrt, simbs, cont)
+        
         if(self.tipo == "fieldDecl"):
             listaIrt.append(IrtNode.IrtNode(self.tipo, [str(cont) + " Instrucciones: " + self.tipo]))
+        
         if(self.tipo == "methodDecl"):
             listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["ETIQUETA", self.lista[1].nodo.value]))
             listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["IniciaMethod"]))
@@ -336,13 +340,318 @@ class Nodo:
 
             listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["FinBlock"]))
 
-        if(self.tipo == "statement"):
+            
+            #vard_decl -->
+
+            #for --> 
+
+            #location;assign;expr -->
+
+            #methodcall -->
+
+            #return;break;continue
+
+            #block -->
+
+        if self.tipo == "statementList":
+            cont+=1
+            for i in self.lista:
+                if i.tipo == "statementList":
+                    for j in i.lista:
+                        # print(j.tipo)
+                        if j.tipo == "statement":
+                            if(j.tipo == "statement"):
+                                cont+=1
+                                listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["IniciaStatement"]))
+                                listaIrt.append(IrtNode.IrtNode(j.tipo, [str(cont) + " Instrucciones: " + j.tipo]))
+                                #if is if -->
+                                if(j.lista[0].tipo == "varDecl"):
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo, ["varDecl"]))
+
+                                elif(j.lista[0].tipo == "if" and len(j.lista) == 5):
+                                    labelExpr = "T" + str(cont)
+                                    etiq = "L"+str(cont)
+                                    etiqSeguir = "L"+str(cont+1)
+                                    cont = j.lista[2].obtIrtInstructions(listaIrt, simbs, cont, labelExpr)
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo, ["if", labelExpr, "Goto", etiq]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo, ["if not", labelExpr, "Goto",etiqSeguir]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["ETIQUETA", etiq]))
+                                    cont = j.lista[4].obtIrtInstructions(listaIrt, simbs, cont)
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["Goto",etiqSeguir]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["FinStatement"]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["ETIQUETA",etiqSeguir])) 
+
+                                elif(j.lista[0].tipo == "if" and len(j.lista)==7):
+                                    labelExpr = "T"+str(cont)
+                                    etiq = "L"+str(cont)
+                                    elseE = "L"+str(cont+1)
+                                    etiqSeguir = "L"+str(cont+2)
+                                    cont = j.lista[2].obtIrtInstructions(listaIrt, simbs, cont, labelExpr)
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo, ["if", labelExpr, "Goto",etiq]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo, ["if not", labelExpr, "Goto",elseE]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["ETIQUETA",etiq]))
+                                    cont = j.lista[4].obtIrtInstructions(listaIrt, simbs, cont)
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["Goto", etiqSeguir]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["ETIQUETA",elseE])) 
+                                    cont = j.lista[6].obtIrtInstructions(listaIrt, simbs, cont)
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["Goto", etiqSeguir]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["FinStatement"]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["ETIQUETA",etiqSeguir])) 
+
+                                elif(j.lista[0].tipo == "for"):
+                                    operadores = j.lista[2].valorMin(simbs, cont) 
+                                    if(operadores == "="):
+                                        listaIrt.append(IrtNode.IrtNode(j.tipo,
+                                            ["MOVE",j.lista[1].valorMin(simbs, cont),
+                                            operadores, j.lista[3].valorMin(simbs, cont) ]))
+                                    elif(operadores == "+="):
+                                        listaIrt.append(IrtNode.IrtNode(j.tipo, 
+                                            ["SUM", j.lista[1].valorMin(simbs, cont),
+                                            j.lista[1].valorMin(simbs, cont),
+                                            j.lista[3].valorMin(simbs, cont) ]))
+                                    elif(operadores == "-="):
+                                        listaIrt.append(IrtNode.IrtNode(j.tipo, 
+                                            ["MINUS", j.lista[1].valorMin(simbs, cont),
+                                            j.lista[1].valorMin(simbs, cont),
+                                            j.lista[3].valorMin(simbs, cont) ]))
+
+                                    labelExpr = "T"+str(cont)
+                                    etiq = "L"+str(cont)
+                                    etiqSeguir = "L"+str(cont+1)
+                                    cont = j.lista[5].obtIrtInstructions(listaIrt, simbs, cont, labelExpr)
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo, ["if",labelExpr,"Goto",etiq]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo, ["if not", labelExpr, "Goto",etiqSeguir]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["ETIQUETA", etiq]))
+                                    cont = j.lista[6].obtIrtInstructions(listaIrt, simbs, cont)
+                                    cont = j.lista[5].obtIrtInstructions(listaIrt, simbs, cont, labelExpr)
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo, ["if",labelExpr,"Goto",etiq]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo, ["if not", labelExpr, "Goto",etiqSeguir]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["FinStatement"]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["ETIQUETA",etiqSeguir])) 
+                                
+                                elif(j.lista[0].tipo == "location" and len(j.lista)==4): 
+                                    operadores = j.lista[1].valorMin(simbs, cont) 
+                                    if(operadores == "="):
+                                        listaIrt.append(IrtNode.IrtNode(j.tipo,
+                                            ["MOVE",j.lista[0].valorMin(simbs, cont),
+                                            operadores, j.lista[2].valorMin(simbs, cont) ]))
+                                    elif(operadores == "+="):
+                                        listaIrt.append(IrtNode.IrtNode(j.tipo, 
+                                            ["SUM", j.lista[0].valorMin(simbs, cont),
+                                            j.lista[0].valorMin(simbs, cont),
+                                            j.lista[2].valorMin(simbs, cont) ]))
+                                    elif(operadores == "-="):
+                                        listaIrt.append(IrtNode.IrtNode(j.tipo, 
+                                            ["MINUS", j.lista[0].valorMin(simbs, cont),
+                                            j.lista[0].valorMin(simbs, cont),
+                                            j.lista[2].valorMin(simbs, cont) ]))
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["FinStatement"]))
+
+                                elif(j.lista[0].tipo == "expr"):
+                                    cont+=1
+                                    listaIrt.append(IrtNode.IrtNode(self.tipo, [str(cont) + " Instrucciones: " + self.tipo]))
+                                    #expr binop expr 
+                                    #expr.getValue ; binop getValue ; expr get value
+                                    if(len(self.lista) == 3):
+                                        if(self.lista[0].tipo == "expr" and self.lista[1].tipo=="bin_op" and self.lista[2].tipo=="expr"):
+                                            if(len(self.lista[0].lista)==1 and len(self.lista[1].lista)==1 and len(self.lista[1].lista)==1 ):
+                                                instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
+                                                if(etiq!=""):
+                                                    listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI",etiq,"=",instruction]))
+                                                else:
+                                                    listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI","T"+ str(cont),"=",instruction]))
+                                            else:
+                                                instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
+                                                if(etiq!=""):
+                                                    listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI",etiq,"=",instruction]))
+                                                else:
+                                                    listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI","T"+ str(cont),"=",instruction]))
+                                        elif(self.lista[0].tipo == "expr" and 
+                                            self.lista[1].tipo=="minus_op" and 
+                                            self.lista[2].tipo=="expr"):
+                                            if(len(self.lista[0].lista)==1 and len(self.lista[1].lista)==1 ):
+                                                instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
+                                                if(etiq!=""):
+                                                    listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI",etiq,"=",instruction]))
+                                                else:
+                                                    listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI","T"+ str(cont),"=",instruction]))
+                                        
+                                        elif(self.lista[0].tipo=="("):
+                                            self.lista[1].obtIrtInstructions(listaIrt, simbs, cont, etiq)
+                                    elif(self.lista[0].tipo=="("):
+                                        self.lista[1].obtIrtInstructions(listaIrt, simbs, cont, etiq)
+
+                                else:
+                                    listaIrt.append(IrtNode.IrtNode(j.tipo + str(cont), ["FinStatement"]))
+                else:
+                    print(i.tipo,"i.tipo")
+                    if(i.tipo == "statement"):
+                        cont+=1
+                        listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["IniciaStatement"]))
+                        listaIrt.append(IrtNode.IrtNode(i.tipo, [str(cont) + " Instrucciones: " + i.tipo]))
+                        #if is if -->
+                        if(i.lista[0].tipo == "varDecl"):
+                            listaIrt.append(IrtNode.IrtNode(i.tipo, ["varDecl"]))
+
+                        elif(i.lista[0].tipo == "if" and len(i.lista) == 5):
+                            labelExpr = "T" + str(cont)
+                            etiq = "L"+str(cont)
+                            etiqSeguir = "L"+str(cont+1)
+                            cont = i.lista[2].obtIrtInstructions(listaIrt, simbs, cont, labelExpr)
+                            listaIrt.append(IrtNode.IrtNode(i.tipo, ["if", labelExpr, "Goto", etiq]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo, ["if not", labelExpr, "Goto",etiqSeguir]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["ETIQUETA", etiq]))
+                            cont = i.lista[4].obtIrtInstructions(listaIrt, simbs, cont)
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["Goto",etiqSeguir]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["FinStatement"]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["ETIQUETA",etiqSeguir])) 
+
+                        elif(i.lista[0].tipo == "if" and len(i.lista)==7):
+                            labelExpr = "T"+str(cont)
+                            etiq = "L"+str(cont)
+                            elseE = "L"+str(cont+1)
+                            etiqSeguir = "L"+str(cont+2)
+                            cont = i.lista[2].obtIrtInstructions(listaIrt, simbs, cont, labelExpr)
+                            listaIrt.append(IrtNode.IrtNode(i.tipo, ["if", labelExpr, "Goto",etiq]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo, ["if not", labelExpr, "Goto",elseE]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["ETIQUETA",etiq]))
+                            cont = i.lista[4].obtIrtInstructions(listaIrt, simbs, cont)
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["Goto", etiqSeguir]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["ETIQUETA",elseE])) 
+                            cont = i.lista[6].obtIrtInstructions(listaIrt, simbs, cont)
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["Goto", etiqSeguir]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["FinStatement"]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["ETIQUETA",etiqSeguir])) 
+
+                        elif(i.lista[0].tipo == "for"):
+                            operadores = i.lista[2].valorMin(simbs, cont) 
+                            if(operadores == "="):
+                                listaIrt.append(IrtNode.IrtNode(i.tipo,
+                                    ["MOVE",i.lista[1].valorMin(simbs, cont),
+                                    operadores, i.lista[3].valorMin(simbs, cont) ]))
+                            elif(operadores == "+="):
+                                listaIrt.append(IrtNode.IrtNode(i.tipo, 
+                                    ["SUM", i.lista[1].valorMin(simbs, cont),
+                                    i.lista[1].valorMin(simbs, cont),
+                                    i.lista[3].valorMin(simbs, cont) ]))
+                            elif(operadores == "-="):
+                                listaIrt.append(IrtNode.IrtNode(i.tipo, 
+                                    ["MINUS", i.lista[1].valorMin(simbs, cont),
+                                    i.lista[1].valorMin(simbs, cont),
+                                    i.lista[3].valorMin(simbs, cont) ]))
+
+                            labelExpr = "T"+str(cont)
+                            etiq = "L"+str(cont)
+                            etiqSeguir = "L"+str(cont+1)
+                            cont = i.lista[5].obtIrtInstructions(listaIrt, simbs, cont, labelExpr)
+                            listaIrt.append(IrtNode.IrtNode(i.tipo, ["if",labelExpr,"Goto",etiq]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo, ["if not", labelExpr, "Goto",etiqSeguir]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["ETIQUETA", etiq]))
+                            cont = i.lista[6].obtIrtInstructions(listaIrt, simbs, cont)
+                            cont = i.lista[5].obtIrtInstructions(listaIrt, simbs, cont, labelExpr)
+                            listaIrt.append(IrtNode.IrtNode(i.tipo, ["if",labelExpr,"Goto",etiq]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo, ["if not", labelExpr, "Goto",etiqSeguir]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["FinStatement"]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["ETIQUETA",etiqSeguir])) 
+                        
+                        elif(i.lista[0].tipo == "location" and len(i.lista)==4): 
+                            operadores = i.lista[1].valorMin(simbs, cont) 
+                            if(operadores == "="):
+                                listaIrt.append(IrtNode.IrtNode(i.tipo,
+                                    ["MOVE",i.lista[0].valorMin(simbs, cont),
+                                    operadores, i.lista[2].valorMin(simbs, cont) ]))
+                            elif(operadores == "+="):
+                                listaIrt.append(IrtNode.IrtNode(i.tipo, 
+                                    ["SUM", i.lista[0].valorMin(simbs, cont),
+                                    i.lista[0].valorMin(simbs, cont),
+                                    i.lista[2].valorMin(simbs, cont) ]))
+                            elif(operadores == "-="):
+                                listaIrt.append(IrtNode.IrtNode(i.tipo, 
+                                    ["MINUS", i.lista[0].valorMin(simbs, cont),
+                                    i.lista[0].valorMin(simbs, cont),
+                                    i.lista[2].valorMin(simbs, cont) ]))
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["FinStatement"]))
+
+                        elif(i.lista[0].tipo == "expr"):
+                            cont+=1
+                            listaIrt.append(IrtNode.IrtNode(self.tipo, [str(cont) + " Instrucciones: " + self.tipo]))
+                            #expr binop expr 
+                            #expr.getValue ; binop getValue ; expr get value
+                            if(len(self.lista) == 3):
+                                if(self.lista[0].tipo == "expr" and self.lista[1].tipo=="bin_op" and self.lista[2].tipo=="expr"):
+                                    if(len(self.lista[0].lista)==1 and len(self.lista[1].lista)==1 and len(self.lista[1].lista)==1 ):
+                                        instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
+                                        if(etiq!=""):
+                                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI",etiq,"=",instruction]))
+                                        else:
+                                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI","T"+ str(cont),"=",instruction]))
+                                    else:
+                                        instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
+                                        if(etiq!=""):
+                                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI",etiq,"=",instruction]))
+                                        else:
+                                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI","T"+ str(cont),"=",instruction]))
+                                elif(self.lista[0].tipo == "expr" and 
+                                    self.lista[1].tipo=="minus_op" and 
+                                    self.lista[2].tipo=="expr"):
+                                    if(len(self.lista[0].lista)==1 and len(self.lista[1].lista)==1 ):
+                                        instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
+                                        if(etiq!=""):
+                                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI",etiq,"=",instruction]))
+                                        else:
+                                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI","T"+ str(cont),"=",instruction]))
+                                
+                                elif(self.lista[0].tipo=="("):
+                                    self.lista[1].obtIrtInstructions(listaIrt, simbs, cont, etiq)
+                            elif(self.lista[0].tipo=="("):
+                                self.lista[1].obtIrtInstructions(listaIrt, simbs, cont, etiq)
+
+                        else:
+                            listaIrt.append(IrtNode.IrtNode(i.tipo + str(cont), ["FinStatement"]))
+
+        if(self.tipo == "expr"):
+            cont+=1
+            listaIrt.append(IrtNode.IrtNode(self.tipo, [str(cont) + " Instrucciones: " + self.tipo]))
+            #expr binop expr 
+            #expr.getValue ; binop getValue ; expr get value
+            if(len(self.lista) == 3):
+                if(self.lista[0].tipo == "expr" and self.lista[1].tipo=="bin_op" and self.lista[2].tipo=="expr"):
+                    if(len(self.lista[0].lista)==1 and len(self.lista[1].lista)==1 and len(self.lista[1].lista)==1 ):
+                        instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
+                        if(etiq!=""):
+                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI",etiq,"=",instruction]))
+                        else:
+                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI","T"+ str(cont),"=",instruction]))
+                    else:
+                        instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
+                        if(etiq!=""):
+                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI",etiq,"=",instruction]))
+                        else:
+                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI","T"+ str(cont),"=",instruction]))
+                elif(self.lista[0].tipo == "expr" and 
+                    self.lista[1].tipo=="minus_op" and 
+                    self.lista[2].tipo=="expr"):
+                    if(len(self.lista[0].lista)==1 and len(self.lista[1].lista)==1 ):
+                        instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
+                        if(etiq!=""):
+                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI",etiq,"=",instruction]))
+                        else:
+                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI","T"+ str(cont),"=",instruction]))
+                
+                elif(self.lista[0].tipo=="("):
+                    self.lista[1].obtIrtInstructions(listaIrt, simbs, cont, etiq)
+            elif(self.lista[0].tipo=="("):
+                self.lista[1].obtIrtInstructions(listaIrt, simbs, cont, etiq)
+
+        if self.tipo == "statement":
+            print("ST", self.lista[0].tipo)
             cont+=1
             listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["IniciaStatement"]))
             listaIrt.append(IrtNode.IrtNode(self.tipo, [str(cont) + " Instrucciones: " + self.tipo]))
             #if is if -->
             if(self.lista[0].tipo == "varDecl"):
                 listaIrt.append(IrtNode.IrtNode(self.tipo, ["varDecl"]))
+
             elif(self.lista[0].tipo == "if" and len(self.lista) == 5):
                 labelExpr = "T" + str(cont)
                 etiq = "L"+str(cont)
@@ -355,6 +664,7 @@ class Nodo:
                 listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["Goto",etiqSeguir]))
                 listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["FinStatement"]))
                 listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["ETIQUETA",etiqSeguir])) 
+
             elif(self.lista[0].tipo == "if" and len(self.lista)==7):
                 labelExpr = "T"+str(cont)
                 etiq = "L"+str(cont)
@@ -371,6 +681,7 @@ class Nodo:
                 listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["Goto", etiqSeguir]))
                 listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["FinStatement"]))
                 listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["ETIQUETA",etiqSeguir])) 
+
             elif(self.lista[0].tipo == "for"):
                 operadores = self.lista[2].valorMin(simbs, cont) 
                 if(operadores == "="):
@@ -401,6 +712,7 @@ class Nodo:
                 listaIrt.append(IrtNode.IrtNode(self.tipo, ["if not", labelExpr, "Goto",etiqSeguir]))
                 listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["FinStatement"]))
                 listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["ETIQUETA",etiqSeguir])) 
+            
             elif(self.lista[0].tipo == "location" and len(self.lista)==4): 
                 operadores = self.lista[1].valorMin(simbs, cont) 
                 if(operadores == "="):
@@ -418,58 +730,50 @@ class Nodo:
                         self.lista[0].valorMin(simbs, cont),
                         self.lista[2].valorMin(simbs, cont) ]))
                 listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["FinStatement"]))
-            else:
-                listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["FinStatement"]))
-            #vard_decl -->
 
-            #for --> 
+            elif(self.lista[0].tipo == "expr"):
+                lenLista = len(self.lista)
+                if self.lista[-1] == ";":
+                    lenLista =- 1
+                print(self.lista[1].nodo)
+                print(self.lista[1].nodo.tipoSimbolo)
 
-            #location;assign;expr -->
-
-            #methodcall -->
-
-            #return;break;continue
-
-            #block -->
-            
-        if(self.tipo == "expr"):
-            cont+=1
-            listaIrt.append(IrtNode.IrtNode(self.tipo, [str(cont) + " Instrucciones: " + self.tipo]))
-            #expr binop expr 
-            #expr.getValue ; binop getValue ; expr get value
-            if(len(self.lista) == 3):
-                if(self.lista[0].tipo == "expr" and 
-                    self.lista[1].tipo=="bin_op" and 
-                    self.lista[2].tipo=="expr"):
-                    if(len(self.lista[0].lista)==1 and len(self.lista[1].lista)==1 and len(self.lista[1].lista)==1 ):
-                        instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
-                        if(etiq!=""):
-                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IF_BOOL",etiq,"=",instruction]))
+                cont+=1
+                listaIrt.append(IrtNode.IrtNode(self.tipo, [str(cont) + " Instrucciones: " + self.tipo]))
+                #expr binop expr 
+                #expr.getValue ; binop getValue ; expr get value
+                if(lenLista == 3):
+                    if(self.lista[0].tipo == "expr" and self.lista[1].tipo=="bin_op" and self.lista[2].tipo=="expr"):
+                        if(len(self.lista[0].lista)==1 and len(self.lista[1].lista)==1 and len(self.lista[1].lista)==1 ):
+                            instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
+                            if(etiq!=""):
+                                listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI",etiq,"=",instruction]))
+                            else:
+                                listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI","T"+ str(cont),"=",instruction]))
                         else:
-                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IF_BOOL","T"+ str(cont),"=",instruction]))
-                    else:
-                        instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
-                        if(etiq!=""):
-                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IF_BOOL",etiq,"=",instruction]))
-                        else:
-                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IF_BOOL","T"+ str(cont),"=",instruction]))
-                elif(self.lista[0].tipo == "expr" and 
-                    self.lista[1].tipo=="minus_op" and 
-                    self.lista[2].tipo=="expr"):
-                    if(len(self.lista[0].lista)==1 and len(self.lista[1].lista)==1 ):
-                        instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
-                        if(etiq!=""):
-                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IF_BOOL",etiq,"=",instruction]))
-                        else:
-                            listaIrt.append(IrtNode.IrtNode(self.tipo, ["IF_BOOL","T"+ str(cont),"=",instruction]))
-                
+                            instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
+                            if(etiq!=""):
+                                listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI",etiq,"=",instruction]))
+                            else:
+                                listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI","T"+ str(cont),"=",instruction]))
+                    
+                    elif(self.lista[0].tipo == "expr" and self.lista[1].tipo=="minus_op" and self.lista[2].tipo=="expr"):
+                        if(len(self.lista[0].lista)==1 and len(self.lista[1].lista)==1 ):
+                            instruction = [self.lista[0].valorMin(simbs, cont), self.lista[1].valorMin(simbs, cont), self.lista[2].valorMin(simbs, cont)]
+                            if(etiq!=""):
+                                listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI",etiq,"=",instruction]))
+                            else:
+                                listaIrt.append(IrtNode.IrtNode(self.tipo, ["IFCONTI","T"+ str(cont),"=",instruction]))
+                    
+                    elif(self.lista[0].tipo=="("):
+                        self.lista[1].obtIrtInstructions(listaIrt, simbs, cont, etiq)
                 elif(self.lista[0].tipo=="("):
                     self.lista[1].obtIrtInstructions(listaIrt, simbs, cont, etiq)
-            elif(self.lista[0].tipo=="("):
-                self.lista[1].obtIrtInstructions(listaIrt, simbs, cont, etiq)
-            #suma -- >
-            #compare -- >
-            #method call -- >
+
+            else:
+                listaIrt.append(IrtNode.IrtNode(self.tipo + str(cont), ["FinStatement"]))
+
+        # print(cont)
         return cont
 
     def getNodesIrt(self, listaIrt, simbs, cont):

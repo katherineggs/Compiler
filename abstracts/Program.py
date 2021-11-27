@@ -31,7 +31,7 @@ class Program:
         return self.lista[4].lista 
 
     def obtNodosAllIrt(self):
-        self.listaIrt.append(IrtNode.IrtNode("Program", ["StartProgram"]))
+        self.listaIrt.append(IrtNode.IrtNode("Program", ["INICIOP"]))
 
         cont = 0
         for node in self.lista:
@@ -40,4 +40,4 @@ class Program:
             # if (len(node.lista)!=0):
             #     cont = node.getNodesIrt(self.listaIrt, self.simbs, cont)
 
-        self.listaIrt.append(IrtNode.IrtNode("Program", ["EndProgram"]))
+        self.listaIrt.append(IrtNode.IrtNode("Program", ["ENDP"]))

@@ -5,6 +5,9 @@ import files.outputFile as outputFile
 import parser1.Parser as parser
 import semantic.Semantic as semantic
 import irt.Irt as Irt
+import codeG.Codegen as Codegen
+from anytree import RenderTree
+
 
 import sys
 
@@ -26,7 +29,7 @@ def ayuda():
 
 def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
     #opciones
-    if stage == "scanner" or stage == "parser" or stage == "" or stage=="semantic" or stage=="irt":
+    if stage == "scanner" or stage == "parser" or stage == "" or stage=="semantic" or stage=="irt" or stage == "codegen":
         debug = False
         #debug
         if "scanner" in debugStage:
@@ -61,7 +64,7 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
 
         print("\n ----------------------------")
     
-    if stage == "parser" or stage=="semantic" or stage=="irt":
+    if stage == "parser" or stage=="semantic" or stage=="irt" or stage == "codegen" or stage == "":
         debug = False
         #debug
         if "parser" in debugStage :
@@ -76,7 +79,7 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
 
         ErrP = len(listaErrores)
 
-    if stage=="semantic" or stage=="irt":
+    if stage=="semantic" or stage=="irt" or stage == "codegen" or stage == "":
         debug = False
 
         if("semantic" in debugStage):
@@ -92,18 +95,29 @@ def execute(inputCodigo, nombreArchivoOut, stage, optStage, debugStage):
         print("\n ----------------------------")
 
     #
-    if(stage == "irt"):
-        print("IRT--------")
-        if(ErrS == 0 and ErrP == 0 and ErrSM == 0):
+    if stage == "irt" or stage == "codegen" or stage == "":
+        print("\nIRT--------")
+        if ErrS == 0 and ErrP == 0 and ErrSM == 0:
             debug = False
             if "irt" in debugStage:
                 debug = True
             irt = Irt.Irt()
             listaIrt = irt.irt(mainProgram, debug)
-            print(listaIrt)
+            # out.outputFile(listaIrt, str(nombreArchivoOut+"Irt"))            
+
         else:
             print("Hay errores en el error_log")
 
+    if stage == "codegen" or stage == "":
+        print("\nCODE GENERATION--------")
+        if ErrS == 0 and ErrP == 0 and ErrSM == 0:
+            codegen = Codegen.Codegen()
+            listaCod = codegen.codegen(mainProgram, debug, nombreArchivoOut)
+            print(listaCod)
+            # out.outputFile(listaCod, str(nombreArchivoOut+"CodeGen"))            
+        else:
+            print("Hay errores en el error_log")
+        print("\n ----------------------------")
 
 if __name__ == "__main__":
     inputCodigo = ""    # file de entrada
